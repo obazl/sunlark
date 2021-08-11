@@ -596,10 +596,10 @@ s7_pointer sunlark_vector_mutate_item(s7_scheme *s7,
     struct node_s *vector = utarray_eltptr(list_expr->subnodes, 1);
     assert(vector->tid == TK_Expr_List);
     int vec_type = sunlark_infer_expr_list_type(vector);
-    log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]);
+    /* log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]); */
 
     if (s7_is_procedure(newval)) {
-        log_debug("ACTION: procedure");
+        /* log_debug("ACTION: procedure"); */
         return NULL;
     }
 
@@ -609,7 +609,7 @@ s7_pointer sunlark_vector_mutate_item(s7_scheme *s7,
             return _vector_splice(s7, _list_expr, index, s7_cdr(newval));
         }
         if (action == KW(append)) {
-            log_debug("0 xxxxxxxxxxxxxxxx");
+            /* log_debug("0 xxxxxxxxxxxxxxxx"); */
             /* return _vector_append(s7, _list_expr, index, s7_cdr(newval)); */
         }
         return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
@@ -651,15 +651,15 @@ LOCAL s7_pointer _vector_splice(s7_scheme *s7,
     }
 
     index = sealark_normalize_index(list_expr, index);
-    log_debug("normalized index: %d", index);
+    /* log_debug("normalized index: %d", index); */
 
-    log_debug("splicing %s at locn: %d", s7_object_to_c_string(s7, splice),
-              index);
+    /* log_debug("splicing %s at locn: %d", s7_object_to_c_string(s7, splice), */
+    /*           index); */
 
     int len = s7_vector_length(splice);
     for (int i=0; i < len; i++) {
         s7_pointer item = s7_vector_ref(s7, splice, i);
-        log_debug("splicing item %d: %s", i, s7_object_to_c_string(s7, item));
+        /* log_debug("splicing item %d: %s", i, s7_object_to_c_string(s7, item)); */
         /* item could be any supported type */
         if (s7_is_integer(item)) {
             errno = 0;
@@ -668,6 +668,7 @@ LOCAL s7_pointer _vector_splice(s7_scheme *s7,
                                                index + i);
             if (errno != 0) {
                 log_error("Error splicing...");
+                return NULL;
             }
         }
     }
@@ -695,12 +696,12 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
     struct node_s *vector = utarray_eltptr(list_expr->subnodes, 1);
     assert(vector->tid == TK_Expr_List);
     int vec_type = sunlark_infer_expr_list_type(vector);
-    log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]);
+    /* log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]); */
 
     if (s7_is_list(s7, newval)) {
         s7_pointer action = s7_car(newval);
         if (action == KW(splice)) {
-            log_debug("ACTION: splice");
+            /* log_debug("ACTION: splice"); */
         } else {
             return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
                             s7_list(s7, 2, s7_make_string(s7,
@@ -708,7 +709,7 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
                                     newval)));
         }
     } else {
-        log_debug("ACTION: replace");
+        /* log_debug("ACTION: replace"); */
     }
 
     /* get the item to update */
@@ -733,7 +734,7 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
                                         newval,
                           s7_make_string(s7, token_name[vec_type][0]))));
             }
-            log_debug("replacing item in string list");
+            /* log_debug("replacing item in string list"); */
             struct node_s *newitem
                 = sealark_set_string(item, 0, s7_string(newval));
             /* free(item->s); */
@@ -759,7 +760,7 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
         }
         if (s7_is_keyword(newval)) {
             if (newval == KW(null)) {
-                log_debug("nullifying (removing) item from list");
+                /* log_debug("nullifying (removing) item from list"); */
                 errno = 0;
                 struct node_s *updated_vector
                     = sealark_vector_remove_item(vector, index);
@@ -780,13 +781,13 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
             }
         }
         if (s7_is_symbol(newval)) {
-            log_debug("replacing item in list with symbol");
+            /* log_debug("replacing item in list with symbol"); */
             struct node_s *newitem
                 = sealark_set_symbol(item, s7_symbol_name(newval));
             return _list_expr;
         }
         if (s7_is_c_object(newval)) {
-            log_debug("replacing item in list with c-object");
+            /* log_debug("replacing item in list with c-object"); */
             struct node_s *newval_node = s7_c_object_value(newval);
             if (newval_node->tid == TK_STRING) {
                 if (vec_type == TK_STRING) {
@@ -811,8 +812,8 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
                                             lst,
                     s7_type_of(s7, lst))));
                 }
-                log_debug("splicing: %s", s7_object_to_c_string(s7, lst));
-                log_debug("item: %d %s", item->tid, TIDNAME(item));
+                /* log_debug("splicing: %s", s7_object_to_c_string(s7, lst)); */
+                /* log_debug("item: %d %s", item->tid, TIDNAME(item)); */
             }
             if (KW(remove!) == s7_car(newval)) {
                 struct node_s *newitem
@@ -860,16 +861,16 @@ struct node_s *sunlark_update_list_value(s7_scheme *s7,
     /*   child[0] = '[', child[1] = expr_list, child[2] = ']'*/
     struct node_s *expr_list = utarray_eltptr(list_expr_node->subnodes, 1);
 
-    log_debug("edits: %s", s7_object_to_c_string(s7, edits));
+    /* log_debug("edits: %s", s7_object_to_c_string(s7, edits)); */
     s7_pointer action = s7_car(edits);
-    log_debug("action: %s", s7_object_to_c_string(s7, action));
+    /* log_debug("action: %s", s7_object_to_c_string(s7, action)); */
     if (!s7_is_keyword(action)) {
         log_error("ERROR: action arg should be :add! or :remove! (got %s)", s7_object_to_c_string(s7, action));
         errno = ESUNLARK_INVALID_ARG;
         return NULL;
     }
     if (action == s7_make_keyword(s7, "add!")) {
-        log_debug("ACTION ADD");
+        /* log_debug("ACTION ADD"); */
         int editlen = s7_list_length(s7, edits);
         if (editlen < 2) {
             log_error("edit list for :add must at least two elements: %s",
@@ -883,7 +884,7 @@ struct node_s *sunlark_update_list_value(s7_scheme *s7,
         /* return sunlark_new_node(s7, new_expr_list); */
     }
     if (action == s7_make_keyword(s7, "replace")) {
-        log_debug("ACTION REPLACE");
+        /* log_debug("ACTION REPLACE"); */
         int editlen = s7_list_length(s7, s7_cdr(edits));
         if ( (editlen % 2) != 0 ) {
             log_error("ERROR: edit list for :add must have an even number of elements: %s", s7_object_to_c_string(s7, action));
@@ -901,7 +902,7 @@ struct node_s *sunlark_update_list_value(s7_scheme *s7,
         return new_expr_list;
    }
     if (action == s7_make_keyword(s7, "remove!")) {
-        log_debug("ACTION REMOVE");
+        /* log_debug("ACTION REMOVE"); */
         int editlen = s7_list_length(s7, s7_cdr(edits));
         if ( editlen == 0 ) {
             log_error("ERROR: edit list for :remove must have at least one arg: %s", s7_object_to_c_string(s7, action));
