@@ -1,0 +1,115 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name  = "edit",
+    linkstatic = 1,
+    srcs  = [
+        "edit.c",
+        "edit.h",
+    ],
+    data = [
+        "//repl/scm:edit.scm"
+    ],
+    defines = ["DEBUG", "DEBUG_TRACE"],
+    copts = select({
+        # strdup is non-standard, not supported on linux in strict c11 mode
+        "//bzl/host:macos": ["-std=c11"],
+        "//bzl/host:linux": ["-std=gnu11"],
+        "//conditions:default": ["-std=c11"],
+    }) + [
+        "-pedantic-errors",
+
+        "-I$(GENDIR)/bindings/scheme",
+        "-I$(GENDIR)/external/sealark/binding/scheme",
+
+        "-I", "$(GENDIR)/sealark",
+        "-I", "$(GENDIR)external/sealark/sealark",
+
+        "-I$(GENDIR)/sunlark",
+        "-I$(GENDIR)/external/sealark/sunlark",
+
+        "-I", "vendored/logc",
+        "-I", "external/sealark/vendored/logc",
+
+        "-I", "vendored/s7",
+        "-I", "external/sealark/vendored/s7",
+
+        "-I", "vendored/uthash",
+        "-I", "external/sealark/vendored/uthash",
+    ],
+    deps = [
+        "//bindings/scheme:sunlark",
+        "@sealark//bazel",
+        "@sealark//sealark",
+        "//vendored/logc",
+        "//vendored/uthash",
+        "//vendored/s7"
+    ],
+)
+
+##########
+cc_binary(
+    name  = "repl",
+    srcs  = ["repl.c"],
+    copts = select({
+        # strdup is non-standard, not supported on linux in strict c11 mode
+        "//bzl/host:macos": ["-std=c11"],
+        "//bzl/host:linux": ["-std=gnu11"],
+        "//conditions:default": ["-std=c11"],
+    }) + [
+        "-pedantic-errors",
+        "-I$(GENDIR)/src",
+        # "-I$(GENDIR)/bindings/scheme",
+        "-Ivendored/linenoise",
+        "-Ivendored/logc",
+        "-Ivendored/s7",
+        "-Ivendored/uthash",
+        "-I$(GENDIR)/external/sealark/bazel"
+    ],
+    data = [
+        "//repl/scm:edit.scm"
+    ],
+    linkopts = select({
+        "//bzl/host:macos": [],
+        "//bzl/host:linux": [ "-Wl,-E", "-ldl"],
+        "//conditions:default": {}
+    }) + [
+        "-lm",
+    ],
+    deps = [
+        "//src:sunlark",
+        "//vendored/linenoise",
+        "//vendored/s7",
+        "//vendored/uthash",
+        "@sealark//bazel"
+    ],
+    visibility = ["//visibility:public"]
+)
+
+########
+genrule(
+    name = "mkhdrs",
+    srcs = [
+        "edit.c",
+        # "//bindings/scheme:libsunlark.c",
+        "@sealark//bazel:bazel_config.c",
+        # "//sealark:mkhdrs-export",
+        # "//bindings/scheme:mkhdrs-export",
+    ],
+    outs = [
+        "edit.h",
+    ],
+    cmd = "\n".join([
+        "SRC1=$(location edit.c)",
+        "SRCDIR1=`dirname $$SRC1`",
+        "$(location //vendored/makeheaders) \\",
+        # "    $(location //bindings/scheme:libsunlark.c) \\",
+        # "    $(location //bindings/scheme:mkhdrs-export) \\",
+        "    $(location @sealark//bazel:bazel_config.c) \\",
+        # "    $(location //sealark:mkhdrs-export) \\",
+        "    $(location edit.c)",
+        "cp $${SRCDIR1}/*.h $(@D)",
+    ]),
+    tools = ["//vendored/makeheaders"],
+    visibility = ["//visibility:public"]
+)

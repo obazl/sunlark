@@ -1,3 +1,14 @@
+test.BUILD.bazel
+*.log
+tmp/
+test/data/tmp
+user.bazelrc
+.history.txt
+
+GPATH
+GRTAGS
+GTAGS
+
 # Prerequisites
 *.d
 
