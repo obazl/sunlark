@@ -1,0 +1,33 @@
+load(
+    "@obazl_rules_ocaml//ocaml:rules.bzl",
+    "ocaml_library",
+    "ocaml_module",
+    "ocaml_signature",
+    "ocaml_null"
+)
+
+package(default_visibility = ["//visibility:public"])
+
+#############
+ocaml_module(
+    name   = "Uri",
+    struct = "uri.ml",
+    sig    = "Uri.cmi",
+    deps   = [
+        "@opam//lib/angstrom",
+        "@opam//lib/stringext",
+        "@opam//lib/yojson",
+    ]
+)
+
+#############
+ocaml_signature(
+    name  = "Uri.cmi",
+    src   = "uri.mli",
+    deps   = [
+        # "@opam//lib/threads/posix",
+        "@opam//lib/angstrom",
+        "@opam//lib/stringext",
+        "@opam//lib/yojson",
+    ]
+)
