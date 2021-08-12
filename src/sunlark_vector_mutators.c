@@ -704,7 +704,7 @@ struct node_s *sunlark_vector_mutate_item(s7_scheme *s7,
     struct node_s *vector = utarray_eltptr(list_expr->subnodes, 1);
     assert(vector->tid == TK_Expr_List);
     int vec_type = sunlark_infer_expr_list_type(vector);
-    log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]);
+    /* log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]); */
 
     if (s7_is_procedure(newval)) {
         log_error("ACTION: procedure - not yet implemented");
