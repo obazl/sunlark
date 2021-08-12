@@ -435,7 +435,7 @@ bool _list_is_valid(s7_scheme *s7, s7_pointer list)
 }
 
 /* **************************************************************** */
-_merge_binding_list(UT_array *bindings, struct node_s *bindings_list)
+void _merge_binding_list(UT_array *bindings, struct node_s *bindings_list)
 {
 #if defined (DEBUG_TRACE) || defined(DEBUG_PATHS)
     log_debug("_merge_binding_list"); /* = TK_Arg_List */
