@@ -81,15 +81,15 @@ s7_pointer sunlark_node_satisfies_kw_pred(s7_scheme *s7, s7_pointer kw, struct n
     buf[strlen(buf) - 1] = '\0'; /* remove final ?  */
 
     int tokid = sealark_kw_to_tid(buf);
-    log_debug("kw to tid: %d", tokid);
+    /* log_debug("kw to tid: %d", tokid); */
     if (tokid < 0) {
         return s7_f(s7);
     }
     /* s7_pointer obj = s7_car(args); */
     /* struct node_s *n = s7_c_object_value(obj); */
-    log_debug("self tid: %d %s, tokid %d %s",
-              self->tid, TIDNAME(self),
-              tokid, token_name[tokid][0]);
+    /* log_debug("self tid: %d %s, tokid %d %s", */
+    /*           self->tid, TIDNAME(self), */
+    /*           tokid, token_name[tokid][0]); */
 
     return s7_make_boolean(s7, self->tid == tokid);
 }

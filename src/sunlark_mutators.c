@@ -71,6 +71,7 @@ s7_pointer sunlark_node_set_specialized(s7_scheme *s7, s7_pointer args)
 }
 
 /* **************************************************************** */
+//FIXME: set! should return void?
 s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
 {
 #if defined(DEBUG_TRACE)
@@ -394,86 +395,13 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
                   s7_object_to_c_string(s7, selector),
                   s7_object_to_c_string(s7, update_val));
 #endif
+        sunlark_vector_mutate_dispatch(s7, context_node,
+                                                selector, update_val);
+        /* if (result) */
+        /*     return sunlark_new_node(s7, result); */
+        /* else */
+        /*     return NULL; */
 
-        if (s7_is_keyword(selector)) {
-            if (selector == KW(*)) {
-                /* log_debug("Removing all items from :value list"); */
-                struct node_s *exl = utarray_eltptr(context_node->subnodes, 1);
-                utarray_clear(exl->subnodes);
-                return context;
-            }
-
-            int idx = sunlark_kwindex_to_int(s7, selector);
-            if (errno == 0) {// we got an int
-                return sunlark_vector_mutate_item(s7, context,
-                                                   idx, //selector,
-                                                   update_val);
-            } else {
-                return(s7_error(s7,
-                                s7_make_symbol(s7, "invalid_argument"),
-                                s7_list(s7, 2, s7_make_string(s7,
-            "Bad arg ~A - indexing keyword must be ':' followed by digit(s)."),
-                                        selector)));
-            }
-        }
-        if (s7_is_integer(selector)) {
-            /* indexing int list by int value */
-            log_error("Use int keywords (e.g. :%d) to index lists",
-                      s7_integer(selector));
-            return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
-                            s7_list(s7, 3, s7_make_string(s7,
-             "Use :~A instead of ~A to index a list"),
-                                    selector, selector)));
-        }
-        if (s7_is_string(selector)) {
-            /* indexing string list by string value */
-            UT_array *items
-                = sealark_vector_items_for_string(s7_c_object_value(context),
-                                                  s7_string(selector));
-            sealark_update_vector_items(items,
-                                        s7_string(update_val));
-            /* sealark_debug_log_ast_outline(items, true); // crush */
-            return nodelist_to_s7_list(s7, items);
-        }
-
-        if (s7_is_symbol(selector)) { /* find symbol value in list */
-            log_debug("NOT YET IMPLEMENTED: indexing list by sym value");
-            errno = ENOT_IMPLEMENTED;
-            return NULL;
-        }
-
-        /* selector is compound expr */
-        s7_pointer v = sunlark_vector_dispatcher(s7, context_node, selector);
-        struct node_s *updated;
-        if (v) {
-            struct node_s *r = s7_c_object_value(v);
-            switch(r->tid) {
-            case TK_List_Expr:  /* (myvec) */
-                updated =sunlark_mutate_vector(s7, r, update_val);
-                /* sealark_debug_log_ast_outline(r, 4); */
-                break;
-            /* path indexed into vector */
-            case TK_STRING:
-                updated = sunlark_set_string(s7, r, update_val);
-                break;
-            case TK_ID:
-                updated = sunlark_set_id(s7, r, selector, update_val);
-                break;
-            case TK_INT:
-                updated = sealark_set_int(r, s7_integer(update_val));
-                break;
-            default:
-                ;
-            }
-            if (updated)
-                return sunlark_new_node(s7, updated);
-            else
-                //FIXME: error
-                return s7_unspecified(s7);
-        } else {
-            // error
-            return s7_unspecified(s7);
-        }
         break;
     default:
         log_error("NOT IMPLEMENTED for context %d %s",
@@ -509,7 +437,7 @@ s7_pointer sunlark_remove_bang(s7_scheme *s7, s7_pointer args)
 }
 
 /* **************** */
-LOCAL struct node_s *sunlark_set_string(s7_scheme *s7,
+struct node_s *sunlark_set_string(s7_scheme *s7,
                                         struct node_s *old_vec,
                                         s7_pointer new_vec)
 {
@@ -522,7 +450,7 @@ LOCAL struct node_s *sunlark_set_string(s7_scheme *s7,
 }
 
 /* **************** */
-LOCAL struct node_s *sunlark_set_id(s7_scheme *s7,
+struct node_s *sunlark_set_id(s7_scheme *s7,
                                     struct node_s *context_node,
                                     s7_pointer selector,
                                     s7_pointer newval)

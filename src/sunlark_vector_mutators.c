@@ -15,6 +15,99 @@
 /* **************** */
 //FIXME: also update rbrack position?
 /*  replace _content_ of list_expr, not the whole expr */
+/* struct node_s * */
+void sunlark_vector_mutate_dispatch(s7_scheme *s7,
+                                              struct node_s *vector,
+                                              s7_pointer selector,
+                                              s7_pointer update_val)
+{
+#if defined(DEBUG_TRACE) || defined(DEBUG_MUTATORS)
+    log_debug("sunlark_vector_mutate_dispatch");
+#endif
+
+    int idx = sunlark_kwindex_to_int(s7, selector);
+    if (errno == 0) { // int or kwint
+        /* return */
+        sunlark_vector_mutate_item(s7, vector,
+                                   idx, //selector,
+                                   update_val);
+        return;
+    /* } else { */
+    /*     /\* indexing int list by int value *\/ */
+    /*     log_error("Use int keywords (e.g. :%d) to index lists", */
+    /*               s7_integer(selector)); */
+    /*     return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"), */
+    /*                     s7_list(s7, 3, s7_make_string(s7, */
+    /*                                                   "Use :~A instead of ~A to index a list"), */
+    /*                             selector, selector))); */
+    }
+
+    if (s7_is_keyword(selector)) { /* non-kwint kw */
+        if (selector == KW(*)) {
+            /* log_debug("Removing all items from :value list"); */
+            struct node_s *exl = utarray_eltptr(vector->subnodes, 1);
+            utarray_clear(exl->subnodes);
+            return; // vector;
+        }
+    }
+
+    if (s7_is_string(selector)) {
+        /* indexing string list by string value */
+        UT_array *items
+            = sealark_vector_items_for_string(vector,
+                                              s7_string(selector));
+        sealark_update_vector_items(items,
+                                    s7_string(update_val));
+        /* sealark_debug_log_ast_outline(items, true); // crush */
+        nodelist_to_s7_list(s7, items);
+        return;
+    }
+
+    if (s7_is_symbol(selector)) { /* find symbol value in list */
+        log_debug("NOT YET IMPLEMENTED: indexing list by sym value");
+        errno = ENOT_IMPLEMENTED;
+        return; // NULL;
+    }
+
+    /* selector is compound expr */
+    s7_pointer v = sunlark_vector_dispatcher(s7, vector, selector);
+    struct node_s *updated;
+    if (v) {
+        struct node_s *r = s7_c_object_value(v);
+        switch(r->tid) {
+        case TK_List_Expr:  /* (myvec) */
+            updated =sunlark_mutate_vector(s7, r, update_val);
+            /* sealark_debug_log_ast_outline(r, 4); */
+            break;
+            /* path indexed into vector */
+        case TK_STRING:
+            updated = sunlark_set_string(s7, r, update_val);
+            break;
+        case TK_ID:
+            updated = sunlark_set_id(s7, r, selector, update_val);
+            break;
+        case TK_INT:
+            updated = sealark_set_int(r, s7_integer(update_val));
+            break;
+        default:
+            ;
+        }
+        if (updated)
+            return; // sunlark_new_node(s7, updated);
+        else
+            //FIXME: error
+            errno = EUNEXPECTED_STATE;
+            return; // s7_unspecified(s7);
+    } else {
+        // error
+        errno = EUNEXPECTED_STATE;
+        return; // s7_unspecified(s7);
+    }
+}
+
+/* **************** */
+//FIXME: also update rbrack position?
+/*  replace _content_ of list_expr, not the whole expr */
 struct node_s *sunlark_mutate_vector(s7_scheme *s7,
                                         struct node_s *old_vec,
                                         s7_pointer new_vec)
@@ -573,8 +666,11 @@ struct node_s *sunlark_remove_attr_list_items(s7_scheme *s7,
 /* **************** */
 /* action: replace or splice */
 /* selector: key int, or val (string or symbol) */
-s7_pointer sunlark_vector_mutate_item(s7_scheme *s7,
-                                       s7_pointer _list_expr,
+//FIXME: return void?
+/* s7_pointer */
+struct node_s *sunlark_vector_mutate_item(s7_scheme *s7,
+                                       /* s7_pointer _list_expr, */
+                                      struct node_s *list_expr,
                                        int index,
                                        /* s7_pointer selector, */
                                        s7_pointer newval)
@@ -586,7 +682,7 @@ s7_pointer sunlark_vector_mutate_item(s7_scheme *s7,
               s7_object_to_c_string(s7, newval));
 #endif
 
-    struct node_s *list_expr = s7_c_object_value(_list_expr);
+    /* struct node_s *list_expr = s7_c_object_value(_list_expr); */
     assert(list_expr->tid == TK_List_Expr);
 
 #if defined(DEBUG_AST)
@@ -599,44 +695,51 @@ s7_pointer sunlark_vector_mutate_item(s7_scheme *s7,
     /* log_debug("vec_type %d %s", vec_type, token_name[vec_type][0]); */
 
     if (s7_is_procedure(newval)) {
-        /* log_debug("ACTION: procedure"); */
+        log_error("ACTION: procedure - not yet implemented");
+        errno = ENOT_IMPLEMENTED;
         return NULL;
     }
 
     if (s7_is_list(s7, newval)) {
         s7_pointer action = s7_car(newval);
         if (action == KW(splice)) {
-            return _vector_splice(s7, _list_expr, index, s7_cdr(newval));
+            return _vector_splice(s7, list_expr, index, s7_cdr(newval));
         }
         if (action == KW(append)) {
             /* log_debug("0 xxxxxxxxxxxxxxxx"); */
-            /* return _vector_append(s7, _list_expr, index, s7_cdr(newval)); */
+            /* return _vector_append(s7, list_expr, index, s7_cdr(newval)); */
         }
-        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
-                        s7_list(s7, 2, s7_make_string(s7,
-                       "Invalid mutate action: ~A. Only :splice supported"),
-                                newval)));
+        errno = EINVALID_ARG;
+        /* return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"), */
+        /*                 s7_list(s7, 2, s7_make_string(s7, */
+        /*                "Invalid mutate action: ~A. Only :splice supported"), */
+        /*                         newval))); */
+        return NULL;
     } else {
-        return _vector_mutate_item_at_index(s7,_list_expr, index, newval);
+        return _vector_mutate_item_at_index(s7, list_expr, index, newval);
     }
 }
 
 /* **************** */
-LOCAL s7_pointer _vector_splice(s7_scheme *s7,
-                                       s7_pointer _list_expr,
-                                       int index,
-                                        s7_pointer _splice)
+//FIXME: return void?
+/* LOCAL s7_pointer */
+LOCAL struct node_s *_vector_splice(s7_scheme *s7,
+                                    struct node_s *list_expr,
+                                    /* s7_pointer _list_expr, */
+                                    int index,
+                                    s7_pointer _splice)
 {
 #if defined(DEBUG_TRACE) || defined(DEBUG_MUTATORS)
     log_debug(">> _vector_splice @ %d => %s",
               index, s7_object_to_c_string(s7, _splice));
 #endif
 
-    struct node_s *list_expr = s7_c_object_value(_list_expr);
+    /* struct node_s *list_expr = s7_c_object_value(_list_expr); */
     assert(list_expr->tid == TK_List_Expr);
 
     if ( !s7_is_list(s7, _splice)) {
         log_error("Expected list, got %s", s7_object_to_c_string(s7, _splice));
+        errno = EINVALID_ARG;
         return NULL;
     }
 
@@ -644,10 +747,12 @@ LOCAL s7_pointer _vector_splice(s7_scheme *s7,
     if ( !s7_is_vector(splice) ) {
         log_error("Expected vector, got %s",
                   s7_object_to_c_string(s7, splice));
-        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
-                        s7_list(s7, 2, s7_make_string(s7,
-                        ":splice must be followed by vector, got: ~A"),
-                                splice)));
+        errno = EINVALID_ARG;
+        /* return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"), */
+        /*                 s7_list(s7, 2, s7_make_string(s7, */
+        /*                 ":splice must be followed by vector, got: ~A"), */
+        /*                         splice))); */
+        return NULL;
     }
 
     index = sealark_normalize_index(list_expr, index);
@@ -670,13 +775,17 @@ LOCAL s7_pointer _vector_splice(s7_scheme *s7,
                 log_error("Error splicing...");
                 return NULL;
             }
+            return list_expr;
         }
     }
 }
 
 /* **************** */
-LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
-                                       s7_pointer _list_expr,
+//FIXME: return struct node_s *
+/* LOCAL s7_pointer */
+LOCAL struct node_s *_vector_mutate_item_at_index(s7_scheme *s7,
+                                       struct node_s *list_expr,
+                                       /* s7_pointer _list_expr, */
                                        int index,
                                        /* s7_pointer selector, */
                                        s7_pointer newval)
@@ -686,7 +795,7 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
               index, s7_object_to_c_string(s7, newval));
 #endif
 
-    struct node_s *list_expr = s7_c_object_value(_list_expr);
+    /* struct node_s *list_expr = s7_c_object_value(_list_expr); */
     assert(list_expr->tid == TK_List_Expr);
 
 #if defined(DEBUG_AST)
@@ -703,10 +812,12 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
         if (action == KW(splice)) {
             /* log_debug("ACTION: splice"); */
         } else {
-            return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
-                            s7_list(s7, 2, s7_make_string(s7,
-                    "Invalid mutate action: ~A. Only :splice supported"),
-                                    newval)));
+            errno = EINVALID_ARG;
+            /* return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"), */
+            /*                 s7_list(s7, 2, s7_make_string(s7, */
+            /*         "Invalid mutate action: ~A. Only :splice supported"), */
+            /*                         newval))); */
+            return NULL;
         }
     } else {
         /* log_debug("ACTION: replace"); */
@@ -715,11 +826,13 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
     /* get the item to update */
     struct node_s *item;
     item = sealark_vector_item_for_int(list_expr, index);
-    if (!item)
-        return handle_errno(s7, errno,
-                            s7_list(s7, 2, _list_expr,
-                                    s7_make_integer(s7,index)));
-
+    if (!item) {
+        /* return handle_errno(s7, errno, */
+        /*                     s7_list(s7, 2, */
+        /*                             sunlark_new_node(s7,list_expr), */
+        /*                             s7_make_integer(s7,index))); */
+        return NULL;
+    }
     /* we have the item, now update it */
 
     /* if (s7_is_integer(selector)) { /\* index by int *\/ */
@@ -727,12 +840,14 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
             if (vec_type != TK_STRING) {
                 log_error("Trying to insert string item into list of %d %s",
                           vec_type, token_name[vec_type][0]);
-                return(s7_error(s7,
-                                s7_make_symbol(s7, "invalid_argument"),
-                                s7_list(s7, 3, s7_make_string(s7,
-                   "Cannot put string ~S in list of type ~A"),
-                                        newval,
-                          s7_make_string(s7, token_name[vec_type][0]))));
+                errno = EINVALID_ARG;
+                /* return(s7_error(s7, */
+                /*                 s7_make_symbol(s7, "invalid_argument"), */
+                /*                 s7_list(s7, 3, s7_make_string(s7, */
+                /*    "Cannot put string ~S in list of type ~A"), */
+                /*                         newval, */
+                /*           s7_make_string(s7, token_name[vec_type][0])))); */
+                return NULL;
             }
             /* log_debug("replacing item in string list"); */
             struct node_s *newitem
@@ -742,21 +857,23 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
             /* int len = strlen(newstring); */
             /* item->s = calloc(len, sizeof(char)); */
             /* strncpy(item->s, newstring, len); */
-            return _list_expr;
+            return list_expr;
         }
         if (s7_is_integer(newval)) {
             if (vec_type != TK_INT) {
                 log_error("Trying to insert int item into list of type %d %s",
                           TK_STRING, token_name[TK_STRING][0]);
-                return(s7_error(s7,
-                                s7_make_symbol(s7, "invalid_argument"),
-                            s7_list(s7, 3, s7_make_string(s7,
-                        "Cannot put val ~A into list of type ~A"),
-                                newval, s7_make_string(s7, token_name[vec_type][0]))));
+                errno = EINVALID_ARG;
+                /* return(s7_error(s7, */
+                /*                 s7_make_symbol(s7, "invalid_argument"), */
+                /*             s7_list(s7, 3, s7_make_string(s7, */
+                /*         "Cannot put val ~A into list of type ~A"), */
+                /*                 newval, s7_make_string(s7, token_name[vec_type][0])))); */
+                return NULL;
             }
             struct node_s *newitem
                 = sealark_set_int(item, s7_integer(newval));
-            return _list_expr;
+            return list_expr;
         }
         if (s7_is_keyword(newval)) {
             if (newval == KW(null)) {
@@ -765,26 +882,29 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
                 struct node_s *updated_vector
                     = sealark_vector_remove_item(vector, index);
                 if (updated_vector)
-                    return _list_expr;
+                    return list_expr;
                 else
-                    return handle_errno(s7, errno,
-                                        s7_list(s7, 2, _list_expr,
-                                                s7_make_integer(s7,index)));
+                    return NULL;
+                    /* return handle_errno(s7, errno, */
+                    /*                     s7_list(s7, 2, */
+                    /*               sunlark_new_node(s7, list_expr), */
+                    /*                             s7_make_integer(s7,index))); */
             } else {
                 log_error("Cannot set item to keyword: %s",
                           s7_object_to_c_string(s7, newval));
-                return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
-                                s7_list(s7, 2, s7_make_string(s7,
-                              "Cannot set item to keyword ~A"),
-                                    newval)));
-
+                errno = EINVALID_ARG;
+                /* return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"), */
+                /*                 s7_list(s7, 2, s7_make_string(s7, */
+                /*               "Cannot set item to keyword ~A"), */
+                /*                     newval))); */
+                return NULL;
             }
         }
         if (s7_is_symbol(newval)) {
             /* log_debug("replacing item in list with symbol"); */
             struct node_s *newitem
                 = sealark_set_symbol(item, s7_symbol_name(newval));
-            return _list_expr;
+            return list_expr;
         }
         if (s7_is_c_object(newval)) {
             /* log_debug("replacing item in list with c-object"); */
@@ -793,7 +913,7 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
                 if (vec_type == TK_STRING) {
                     struct node_s *newitem
                         = sealark_set_string_c_object(item, newval_node);
-                    return _list_expr;
+                    return list_expr;
                 } else {
                     log_error("only sunlark strings can be used to update string list items");
                     exit(EXIT_FAILURE);
@@ -805,12 +925,14 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
             if (KW(splice) == s7_car(newval)) {
                 s7_pointer lst = s7_cadr(newval);
                 if ( ! s7_is_vector(lst) ) {
-                    return(s7_error(s7,
-                                    s7_make_symbol(s7, "invalid_argument"),
-                                    s7_list(s7, 3, s7_make_string(s7,
-         ":splice must be followed by a vector; found: ~A of type ~A"),
-                                            lst,
-                    s7_type_of(s7, lst))));
+                    errno = EINVALID_ARG;
+                    /*            return(s7_error(s7, */
+                    /*                            s7_make_symbol(s7, "invalid_argument"), */
+                    /*                            s7_list(s7, 3, s7_make_string(s7, */
+                    /* ":splice must be followed by a vector; found: ~A of type ~A"), */
+                    /*                                    lst, */
+                    /*            s7_type_of(s7, lst)))); */
+                    return NULL;
                 }
                 /* log_debug("splicing: %s", s7_object_to_c_string(s7, lst)); */
                 /* log_debug("item: %d %s", item->tid, TIDNAME(item)); */
@@ -818,27 +940,30 @@ LOCAL s7_pointer _vector_mutate_item_at_index(s7_scheme *s7,
             if (KW(remove!) == s7_car(newval)) {
                 struct node_s *newitem
                     = sunlark_remove_attr_list_items(s7, item, s7_cdr(newval));
-                    /* = sunlark_update_list_value(s7, item, "foo", newval); */
+                /* = sunlark_update_list_value(s7, item, "foo", newval); */
                 if (newitem)
-                    return _list_expr;
-                else
-                    return(s7_error(s7,
-                                    s7_make_symbol(s7, "invalid_argument"),
-                                    s7_list(s7, 2, s7_make_string(s7,
-                                            "Arg out of bounds ~A"),
-                                            newval)));
+                    return list_expr;
+                else {
+                    errno = EINVALID_ARG;
+                    /* return(s7_error(s7, */
+                    /*                 s7_make_symbol(s7, "invalid_argument"), */
+                    /*                 s7_list(s7, 2, s7_make_string(s7, */
+                    /*                         "Arg out of bounds ~A"), */
+                    /*                         newval))); */
+                    return NULL;
+                }
             }
+            log_error("Type mismatch: newval %s, list type %d %s",
+                      s7_object_to_c_string(s7, newval),
+                      vec_type, token_name[vec_type][0]);
+            errno = EINVALID_ARG;
+            /* return(s7_error(s7, */
+            /*                 s7_make_symbol(s7, "invalid_argument"), */
+            /*                 s7_list(s7, 3, s7_make_string(s7, */
+            /*                                               "Cannot put val ~A into list of type ~A"), */
+            /*                         newval, s7_make_string(s7, token_name[vec_type][0])))); */
+            return NULL;
         }
-        log_error("Type mismatch: newval %s, list type %d %s",
-                  s7_object_to_c_string(s7, newval),
-                  vec_type, token_name[vec_type][0]);
-        return(s7_error(s7,
-                        s7_make_symbol(s7, "invalid_argument"),
-                        s7_list(s7, 3, s7_make_string(s7,
-                        "Cannot put val ~A into list of type ~A"),
-                                newval, s7_make_string(s7, token_name[vec_type][0]))));
-    /* } */
-
 }
 
 /* ******************************** */

@@ -600,11 +600,10 @@ struct node_s *sunlark_arglist_mutate(s7_scheme *s7,
               s7_object_to_c_string(s7, lval),
               s7_object_to_c_string(s7, update_val));
 #endif
-    /* sealark_debug_log_ast_outline(arglist, 0); */
 
     assert(arglist->tid == TK_Arg_List);
-    arglist->line = -1; //  mark as unformatted
-    arglist->col  = -1; //  mark as unformatted
+    /* arglist->line = -1; //  mark as unformatted */
+    /* arglist->col  = -1; //  mark as unformatted */
 
     if (s7_is_string(lval)) {
         log_error("context: string, not yet");
@@ -886,6 +885,8 @@ LOCAL struct node_s *_binding_splice_vector(s7_scheme *s7,
 {
 #if defined(DEBUG_TRACE) || defined(DEBUG_MUTATE)
     log_debug("_binding_splice_vector at %d", index);
+    /* struct node_s *newval = s7_c_object_value(s7_vector_ref(s7,splice,0)); */
+    /* sealark_debug_log_ast_outline(newval, 0); */
 #endif
     assert(bindings->tid == TK_Arg_List);
 

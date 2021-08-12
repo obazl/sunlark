@@ -142,11 +142,44 @@ LOCAL s7_pointer _target_binding_dispatcher(s7_scheme *s7,
 
     /* expected args: <int> or <sym <key>? idx?>, where <key> = :key | :value */
     struct node_s *binding;
-    if (s7_is_keyword(op)) { /* kws are symbols, so we catch here */
+
+    int idx = sunlark_kwindex_to_int(s7, op);
+    if (errno == 0) { /* op is int or kwint */
+        binding = sealark_target_binding_for_index(target, idx);
+        if (binding) {
+            if (s7_is_null(s7, rest)) {
+                return sunlark_new_node(s7, binding);
+            } else {
+                return sunlark_binding_component(s7, binding, rest);
+            }
+        } else {
+            switch(errno) {
+            case -1:
+                log_error("Binding not found for index %d", idx);
+                return(s7_error(s7,
+                                s7_make_symbol(s7, "not_found"),
+                                s7_list(s7, 2, s7_make_string(s7,
+                            "Binding not found for index: ~A"), op)));
+                break;
+            case EINDEX_TOO_BIG:
+                return(s7_error(s7,
+                                s7_make_symbol(s7, "invalid_argument"),
+                                s7_list(s7, 2, s7_make_string(s7,
+                                "Index too big: ~A"), op)));
+                break;
+            default:
+                log_error("wtf 2 ????????????????");
+                errno = EUNEXPECTED_STATE;
+                return NULL;
+            }
+        }
+    }
+
+    if (s7_is_keyword(op)) { /* kw but not kwint */
         return(s7_error(s7,
                         s7_make_symbol(s7, "invalid_argument"),
                         s7_list(s7, 3, s7_make_string(s7,
-                        "Bad arg: ~S in ~S; expected symbol or int"),
+                                                      "Bad arg: ~S in ~S; expected symbol or int"),
                                 op, path_args)));
     }
 
@@ -183,63 +216,10 @@ LOCAL s7_pointer _target_binding_dispatcher(s7_scheme *s7,
         }
     }
 
-    if (s7_is_integer(op)) {
-        binding = sealark_target_binding_for_index(target, s7_integer(op));
-        if (binding) {
-            if (s7_is_null(s7, rest)) {
-                return sunlark_new_node(s7, binding);
-            } else {
-                return sunlark_binding_component(s7, binding, rest);
-                /* else { */
-                /*     log_error("Too many args: %s", */
-                /*               s7_object_to_c_string(s7, path_args)); */
-                /*     return(s7_error(s7, */
-                /*                     s7_make_symbol(s7, "invalid_argument"), */
-                /*                     s7_list(s7, 2, s7_make_string(s7, */
-                /*                                                   "too many args: ~A"), path_args))); */
-                /* } */
-            }
-        } else {
-            switch(errno) {
-            case -1:
-                log_error("Binding not found for key: %s", s7_symbol_name(op));
-                return(s7_error(s7,
-                                s7_make_symbol(s7, "not_found"),
-                                s7_list(s7, 2, s7_make_string(s7,
-                                                              "Binding not found for key: ~A"), op)));
-                break;
-            case EINDEX_TOO_BIG:
-                return(s7_error(s7,
-                                s7_make_symbol(s7, "invalid_argument"),
-                                s7_list(s7, 2, s7_make_string(s7,
-                                "Index too big: ~A"), op)));
-                break;
-            default:
-                log_error("wtf 2 ????????????????");
-            }
-        }
-
-
-        /* if (s7_is_null(s7, rest)) { */
-        /*     return sunlark_new_node(s7, binding); */
-        /* } else { */
-        /*     if (s7_list_length(s7, rest) == 1) */
-        /*         return _binding_component(s7, binding, rest); */
-        /*     else { */
-        /*         log_error("too many args: %s", */
-        /*                   s7_object_to_c_string(s7, path_args)); */
-        /*         return(s7_error(s7, */
-        /*                         s7_make_symbol(s7, "invalid_argument"), */
-        /*                 s7_list(s7, 2, s7_make_string(s7, */
-        /*                 "too many args: ~A"), path_args))); */
-        /*     } */
-        /* } */
-    }
-
     return(s7_error(s7,
                     s7_make_symbol(s7, "invalid_argument"),
                     s7_list(s7, 2, s7_make_string(s7,
-                                                  "Bad arg: ~S; expected symbol or int"),
+                    "Bad arg: ~S; expected symbol, kwint, or int"),
                             op)));
 }
 

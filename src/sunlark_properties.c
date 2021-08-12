@@ -50,7 +50,7 @@ s7_pointer sunlark_target_property_lookup(s7_scheme *s7,
     if (prop_kw == KW(attrs)) {
         /* log_debug("matched :attrs"); */
         struct node_s *attrs = sunlark_get_attrs_list(s7, self);
-        log_debug("got attrs: %d %s", attrs->tid, token_name[attrs->tid][0]);
+        /* log_debug("got attrs: %d %s", attrs->tid, token_name[attrs->tid][0]); */
         return sunlark_new_node(s7, self);
 
         /* } else { */
@@ -226,24 +226,24 @@ s7_pointer sunlark_common_property_lookup(s7_scheme *s7,
 
     /* "real" bindings, corresponding to fields in the struct */
     if (kw == KW(tid)) {
-        log_debug("tid: %d", ast_node->tid);
+        /* log_debug("tid: %d", ast_node->tid); */
         return s7_make_integer(s7, ast_node->tid);
     }
 
     if (kw == KW(tid->kw)) {
-        log_debug("tid: %d %s", ast_node->tid, TIDNAME(ast_node));
+        /* log_debug("tid: %d %s", ast_node->tid, TIDNAME(ast_node)); */
         char *s = sealark_tid_to_string(ast_node->tid);
         return s7_make_keyword(s7, s);
     }
 
     if (kw == KW(tid->string)) {
-        log_debug("tid: %d", ast_node->tid);
+        /* log_debug("tid: %d", ast_node->tid); */
         char *s = sealark_tid_to_string(ast_node->tid);
         return s7_make_string(s7, s);
     }
 
     if (kw == KW(node-type)) {
-        log_debug("node-type: %d", ast_node->tid);
+        /* log_debug("node-type: %d", ast_node->tid); */
         char *s = sealark_tid_to_string(ast_node->tid);
         return s7_make_keyword(s7, s);
     }
@@ -333,7 +333,7 @@ s7_pointer sunlark_common_property_lookup(s7_scheme *s7,
     if (s7_is_keyword(kw)) {
         if (sunlark_op_is_predicate(s7, kw)) {
             s7_pointer is = sunlark_node_satisfies_kw_pred(s7, kw, ast_node);
-            log_debug("is? %s", s7_object_to_c_string(s7, is));
+            /* log_debug("is? %s", s7_object_to_c_string(s7, is)); */
             return is;
             /* if (is_p == s7_f(s7)) { */
             /*     return is_p; */
