@@ -84,18 +84,18 @@ int main(int argc, char *argv[]) // , char **envp)
     }
     /* if (utstring_len(build_file) == 0) { */
     if (build_file == NULL) {
-        log_error("-f <buildfile> must be provided.");
+        log_error("Usage: bazel run @sunlark//edit -- -f <buildfile>");
         exit(EXIT_FAILURE);
     }
 
     s7_scheme *s7 = sunlark_init();
 
     char *cwd = getcwd(NULL, 0);
-    log_debug("cwd: %s", cwd);
+    /* log_debug("cwd: %s", cwd); */
 
     char *wd = getenv("BUILD_WORKING_DIRECTORY");
     if (wd) {
-        log_debug("launched by `bazel run`: %s", wd);
+        /* log_debug("launched by `bazel run`: %s", wd); */
         /* launched by bazel run cmd */
 
         char *bazel_script_dir = get_bazel_script_dir(callback_script_file);
@@ -105,22 +105,22 @@ int main(int argc, char *argv[]) // , char **envp)
         chdir(wd);
 
         if( access( user_script_dir, F_OK ) != 0 ) {
-            log_warn("WARNING: user_luadir does not exist: %s", user_script_dir);
+            log_warn("WARNING: user_scriptdir does not exist: %s", user_script_dir);
         }
         sunlark_augment_load_path(s7, user_script_dir);
 
         s7_pointer lp = s7_load_path(s7);
-        log_debug("load path: %s", s7_object_to_c_string(s7, lp));
+        /* log_debug("load path: %s", s7_object_to_c_string(s7, lp)); */
 
         /* sunlark_config_moonlark_table(L); */
 
         /* sunlark_load_script_file(L, load_script); */
         s7_pointer lf;
         if (load_script) {
-            log_debug("loading user script: %s", load_script);
+            /* log_debug("loading user script: %s", load_script); */
             lf =  s7_load(s7, load_script);
         } else {
-            log_debug("loading default script: %s", callback_script_file);
+            /* log_debug("loading default script: %s", callback_script_file); */
             lf =  s7_load(s7, callback_script_file);
         }
         /* log_debug("load result: %s", s7_object_to_c_string(s7, lf)); */
@@ -156,9 +156,9 @@ int main(int argc, char *argv[]) // , char **envp)
 
     s7_pointer args =  s7_list(s7, 1, ast);
 
-    log_debug("calling ast_handler");
+    /* log_debug("calling ast_handler"); */
     s7_pointer result = s7_call(s7,
-                                s7_name_to_value(s7, "ast-handler"),
+                                s7_name_to_value(s7, "sunlark-ast-handler"),
                                 args);
     /* result of call is last form evaluated */
     /* log_debug("result: %s", s7_object_to_c_string(s7, result)); */

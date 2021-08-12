@@ -9,6 +9,8 @@
 #include "utarray.h"
 #include "sunlark.h"
 
+#include "repl.h"
+
 char *history = ".history.txt";
 
 void completion(const char *buf, linenoiseCompletions *lc) {
@@ -52,11 +54,9 @@ int main(int argc, char **argv) {
     }
     linenoiseSetMultiLine(1);   /* always support multiline */
 
-    char *callback_script_file = "edit.scm";
-
     char *wd = getenv("BUILD_WORKING_DIRECTORY");
     if (wd) {
-        char *bazel_script_dir = get_bazel_script_dir(callback_script_file);
+        /* we launched from bazel workspace, cd to launch dir */
         chdir(wd);
     }
 

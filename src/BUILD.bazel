@@ -78,7 +78,7 @@ cc_library(
         "-pedantic-errors",
 
         "-I", "$(GENDIR)/src",
-        "-I", "$(GENDIR)external/sunlark/src",
+        "-I", "$(GENDIR)/external/sunlark/src",
 
         "-I", "vendored/logc",
         "-I", "external/sunlark/vendored/logc",

@@ -27,12 +27,16 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
               s7_object_to_c_string(s7, s7_car(args)));
 #endif
 
-    /* log_debug("sunlark-make-target args: %s", */
-    /*           s7_object_to_c_string(s7, args)); */
+    log_debug("sunlark-make-target args: %s",
+              s7_object_to_c_string(s7, args));
 
     s7_pointer rule = s7_car(args);
+    /* log_debug("rule: %s", s7_object_to_c_string(s7, rule)); */
     s7_pointer name = s7_cadr(args);
+    /* log_debug("name: %s", s7_object_to_c_string(s7, name)); */
     s7_pointer rest = s7_caddr(args);
+    log_debug("rest: %s", s7_object_to_c_string(s7, rest));
+    /* log_debug("rest c-obj?: %d", s7_is_c_object(rest)); */
 
     int line = 0;
     int col  = 0;
@@ -89,7 +93,7 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
 
     /* log_debug("rest: %s", s7_object_to_c_string(s7, rest)); */
     int rest_len = s7_list_length(s7, rest) - 1;
-    /* log_debug("rest len: %d", rest_len+1); */
+    log_debug("rest len: %d", rest_len+1);
 
     struct node_s *comma;
     if (rest_len > 0) {
@@ -99,26 +103,50 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
     struct node_s *barg;
     s7_pointer arg = NULL;
     int i = 0;
-    while ( !s7_is_null(s7,rest) ) {
-        arg = s7_car(rest);
-        if ( s7_is_c_object(arg) ) {
-            if (sunlark_node_tid(s7,arg) == TK_Binding) {
-                barg = s7_c_object_value(arg);
+    if (s7_is_c_object(rest)) {
+        if (s7_c_object_type(rest) == ast_node_t) {
+            if (sunlark_node_tid(s7,rest) == TK_Binding) {
+    log_debug("00 xxxxxxxxxxxxxxxx");
+                barg = s7_c_object_value(rest);
                 barg->line = ++line; barg->col = indent;
                 utarray_push_back(arg_list->subnodes, barg);
+    log_debug("0 xxxxxxxxxxxxxxxx");
                 if (rest_len > i) {
+    log_debug("1 xxxxxxxxxxxxxxxx");
                     comma = sealark_new_node(TK_COMMA, without_subnodes);
                     utarray_push_back(arg_list->subnodes, comma);
                 }
-            } else {
-                log_error(":args must be list or vector of :binding nodes");
+    log_debug("2 xxxxxxxxxxxxxxxx");
             }
-        } else {
-            log_error(":args must be a list or vector if :binding nodes; got:", s7_object_to_c_string(s7, s7_type_of(s7, arg)));
         }
-        i++;
-        rest = s7_cdr(rest);
+    } else {
+        if (s7_is_list(s7, rest)) {
+            while ( !s7_is_null(s7,rest) ) {
+                arg = s7_car(rest);
+                if ( s7_is_c_object(arg) ) {
+                    if (sunlark_node_tid(s7,arg) == TK_Binding) {
+                        barg = s7_c_object_value(arg);
+                        barg->line = ++line; barg->col = indent;
+                        utarray_push_back(arg_list->subnodes, barg);
+                        if (rest_len > i) {
+                            comma = sealark_new_node(TK_COMMA, without_subnodes);
+                            utarray_push_back(arg_list->subnodes, comma);
+                        }
+                    } else {
+                        log_error(":args must be list or vector of :binding nodes");
+                    }
+                } else {
+                    log_error(":args must be a list or vector if :binding nodes; got:", s7_object_to_c_string(s7, s7_type_of(s7, arg)));
+                }
+                i++;
+                rest = s7_cdr(rest);
+                log_debug("0 xxxxxxxxxxxxxxxx cdr rest: %s",
+                          s7_object_to_c_string(s7, rest));
+            }
+        }
     }
+    log_debug("9 xxxxxxxxxxxxxxxx");
+
 
     node = sealark_new_node(TK_RPAREN, without_subnodes);
     node->line = ++line;

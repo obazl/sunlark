@@ -379,8 +379,10 @@ s7_pointer sunlark_node_object_applicator(s7_scheme *s7, s7_pointer args)
     s7_pointer rest = s7_cdr(args);
 
     if (s7_is_null(s7, rest)) {   /* (nd) returns nd */
+#if defined(DEBUG_S7_API)
         log_debug("<<<<<<<<<<<<<<<< sunlark_node_object_applicator returning val of type: %s <<<<<<<<<<<<<<<<",
                   s7_object_to_c_string(s7, (s7_type_of(s7, self_s7))));
+#endif
         return self_s7;
     }
 

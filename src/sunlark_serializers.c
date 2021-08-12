@@ -457,7 +457,7 @@ LOCAL void _display_binding_node(struct node_s *nd,
     log_debug("sunlark_display_binding_node");
 #endif
 
-    utstring_printf(buffer, "%*s(",
+    utstring_printf(buffer, "%*s#@(",
                     (level==0)? 0 : level*indent+4,
                     (level==0)? "" : " ");
                     /* (level==0)? 0 : (level+1)*indent+level+1, */

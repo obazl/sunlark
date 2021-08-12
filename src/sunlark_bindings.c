@@ -134,7 +134,8 @@ s7_pointer sunlark_binding_dispatcher(s7_scheme *s7,
         /* return sunlark_common_property_lookup(s7, binding, op); */
     }
 
-    log_error("Invalid op: %s", s7_object_to_c_string(s7, op));
+    log_error("Invalid op: cannot apply binding node to: %s. (To get a list of bindings, do (list ...)).",
+              s7_object_to_c_string(s7, op));
     return handle_errno(s7, EINVALID_ARG, path_args);
     /* errno = EINVALID_ARG; */
     /* return NULL; */

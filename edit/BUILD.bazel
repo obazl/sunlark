@@ -1,9 +1,16 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
 
-##########
 cc_binary(
-    name  = "repl",
-    srcs  = ["repl.c", "repl.h"],
+    name  = "edit",
+    linkstatic = 1,
+    srcs  = [
+        "edit.c",
+        "edit.h",
+    ],
+    data = [
+        "//edit/scm:edit.scm"
+    ],
+    defines = ["DEBUG", "DEBUG_TRACE"],
     copts = select({
         # strdup is non-standard, not supported on linux in strict c11 mode
         "//bzl/host:macos": ["-std=c11"],
@@ -11,8 +18,8 @@ cc_binary(
         "//conditions:default": ["-std=c11"],
     }) + [
         "-pedantic-errors",
-        "-I$(GENDIR)/repl",
-        "-I$(GENDIR)/external/sunlark/repl",
+        "-I$(GENDIR)/edit",
+        "-I$(GENDIR)/external/sunlark/edit",
         "-I$(GENDIR)/src",
         "-I$(GENDIR)/external/sunlark/src",
         "-Ivendored/linenoise",
@@ -23,44 +30,33 @@ cc_binary(
         "-Iexternal/sunlark/vendored/s7",
         "-Ivendored/uthash",
         "-Iexternal/sunlark/vendored/uthash",
-        "-I$(GENDIR)/external/sealark/bazel"
-    ],
-    # data = [
-    #     "//repl/scm:edit.scm"
-    # ],
-    linkopts = select({
-        "//bzl/host:macos": [],
-        "//bzl/host:linux": [ "-Wl,-E", "-ldl"],
-        "//conditions:default": {}
-    }) + [
-        "-lm",
+        # "-I$(GENDIR)/external/sealark/bazel"
     ],
     deps = [
         "//src:sunlark",
-        "//vendored/linenoise",
+        "//vendored/logc",
         "//vendored/s7",
         "//vendored/uthash",
-        "@sealark//bazel"
+        "@sealark//bazel",
     ],
-    visibility = ["//visibility:public"]
 )
 
 ########
 genrule(
     name = "mkhdrs",
     srcs = [
-        "repl.c",
+        "edit.c",
         "@sealark//bazel:bazel_config.c",
     ],
     outs = [
-        "repl.h",
+        "edit.h",
     ],
     cmd = "\n".join([
-        "SRC1=$(location repl.c)",
+        "SRC1=$(location edit.c)",
         "SRCDIR1=`dirname $$SRC1`",
         "$(location //vendored/makeheaders) \\",
         "    $(location @sealark//bazel:bazel_config.c) \\",
-        "    $(location repl.c)",
+        "    $(location edit.c)",
         "cp $${SRCDIR1}/*.h $(@D)",
     ]),
     tools = ["//vendored/makeheaders"],

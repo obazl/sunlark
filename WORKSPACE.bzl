@@ -7,12 +7,13 @@ all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//v
 def cc_fetch_repos():
 
     maybe(
-        git_repository,
-        name = "sealark",
-        remote = "https://github.com/obazl/sealark",
-        # commit = "b1c40e1de81913a3c40e5948f78719c28152486d",
-        # shallow_since = "1605101351 -0800"
-        branch = "dev"
+        http_archive,
+        name = "bazel_skylib",
+        urls = [
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+        ],
+        sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
     )
 
     maybe(
@@ -27,24 +28,33 @@ def cc_fetch_repos():
     maybe(
         http_archive,
         name = "rules_foreign_cc",
-        sha256 = "e14a159c452a68a97a7c59fa458033cc91edb8224516295b047a95555140af5f",
-        strip_prefix = "rules_foreign_cc-0.4.0",
-        url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.4.0.tar.gz",
+        sha256 = "33a5690733c5cc2ede39cb62ebf89e751f2448e27f20c8b2fbbc7d136b166804",
+        strip_prefix = "rules_foreign_cc-0.5.1",
+        url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.5.1.tar.gz",
+    )
+
+    maybe(
+        git_repository,
+        name = "sealark",
+        remote = "https://github.com/obazl/sealark",
+        # commit = "b1c40e1de81913a3c40e5948f78719c28152486d",
+        # shallow_since = "1605101351 -0800"
+        branch = "dev"
     )
 
     # http://www.throwtheswitch.org/unity
-    maybe(
-        http_archive,
-        name = "unity",
-        urls = [
-            "https://github.com/ThrowTheSwitch/Unity/archive/refs/tags/v2.5.2.zip",
-        ],
-        strip_prefix = "v2.5.2",
-        build_file_content = all_content,
-        workspace_file_content = "workspace( name = \"unity\" )"
-    )
+    # maybe(
+    #     http_archive,
+    #     name = "unity",
+    #     urls = [
+    #         "https://github.com/ThrowTheSwitch/Unity/archive/refs/tags/v2.5.2.zip",
+    #     ],
+    #     strip_prefix = "v2.5.2",
+    #     build_file_content = all_content,
+    #     workspace_file_content = "workspace( name = \"unity\" )"
+    # )
 
-    ## for s7
+    ## for s7?
     maybe(
         http_archive,
         name = "libffi",
