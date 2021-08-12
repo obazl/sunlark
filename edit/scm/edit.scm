@@ -12,8 +12,9 @@
   )
 
 (define (sunlark-ast-handler pkg)
-  (display
-   (string-append "running default sunlark-ast-handler proc"))
+  (display (string-append "running default sunlark-ast-handler proc"))
+  (newline)
+  (display (string-append "to run your own proc, put it in .sunlark.d/edit.scm"))
   (newline)
   (display (format #f "load path: ~S" *load-path*))
   (newline)
