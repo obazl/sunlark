@@ -28,6 +28,9 @@ int main(void) {
 /* **************************************************************** */
 void test_rm_binding_val_item_by_int(void)
 {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     form = "'(:> \"binding-rm-1\")";
     path = s7_eval_c_string(s7, form);
     target = s7_apply_function(s7, pkg, path);
@@ -55,9 +58,14 @@ void test_rm_binding_val_item_by_int(void)
     /* path = s7_eval_c_string(s7, form); */
     /* result = s7_apply_function(s7, pkg, path); */
     /* sealark_debug_log_ast_outline(s7_c_object_value(target), 0); */
+    sunlark_dispose(s7,pkg);
 }
 
-void test_remove_binding_by_int(void) {
+void test_remove_binding_by_int(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     /* remove bool_attr attrib */
     char *s = "'(:> \"binding-rm-1\")";
     s7_pointer path = s7_eval_c_string(s7, s);
@@ -112,9 +120,14 @@ void test_remove_binding_by_int(void) {
     /* val = s7_apply_function(s7, result, s7_eval_c_string(s7, "'(:$)")); */
     /* val = s7_apply_function(s7, val, s7_eval_c_string(s7, "'(:$)")); */
     /* TEST_ASSERT_EQUAL_INT( 99, s7_integer(val)); */
+    sunlark_dispose(s7,pkg);
 }
 
-void test_remove_binding_by_sym(void) {
+void test_remove_binding_by_sym(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     /* remove binding1 attrib */
     char *bstr = "(pkg :> \"binding-rm-1\" :@ 'binding1)";
     s7_pointer binding = s7_eval_c_string(s7, bstr);
@@ -145,11 +158,15 @@ void test_remove_binding_by_sym(void) {
     /* if ((errmsg) && (*errmsg)) */
     /*     log_error("CAUGHT: [%s]", errmsg); */
 
+    sunlark_dispose(s7,pkg);
 }
 
 /* **************************************************************** */
 void test_local_remove_binding_by_int(void)
 {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     char *s = "(define bb (make-binding 'akey '(1 2 3)))";
     s7_pointer binding = s7_eval_c_string(s7, s);
     s7_pointer pred= s7_apply_function(s7, binding,
@@ -173,6 +190,7 @@ void test_local_remove_binding_by_int(void)
     /* s7_pointer len = s7_apply_function(s7, vec, */
     /*                         s7_eval_c_string(s7, "'(:length)")); */
     /* TEST_ASSERT_EQUAL_INT( 2, s7_integer(len) ); */
+    sunlark_dispose(s7,pkg);
 }
 
 /* **************************************************************** */

@@ -9,6 +9,12 @@
 
 #include "sunlark_ctors.h"
 
+EXPORT void sunlark_dispose(s7_scheme *s7, s7_pointer _node)
+{
+    struct node_s *node = s7_c_object_value(_node);
+    sealark_dispose(node);
+}
+
 /* **************************************************************** */
 #if INTERFACE
 #define SUNLARK_MAKE_TARGET_HELP "(make-target) returns a new node of type :call-expr"

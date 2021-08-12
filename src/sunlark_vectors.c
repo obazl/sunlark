@@ -31,7 +31,7 @@ s7_pointer sunlark_vector_dispatcher(s7_scheme *s7,
     assert(datum->tid == TK_List_Expr);
 
     int op_count = s7_list_length(s7, path_args);
-    log_debug("op count: %d", op_count);
+    /* log_debug("op count: %d", op_count); */
 
     if (op_count == 0)
         return sunlark_new_node(s7, datum);
@@ -56,7 +56,7 @@ s7_pointer sunlark_vector_dispatcher(s7_scheme *s7,
     struct node_s *vector = utarray_eltptr(datum->subnodes, 1);
 
     /* tid: TK_Expr-List */
-    log_debug("vector tid %d %s", vector->tid, TIDNAME(vector));
+    /* log_debug("vector tid %d %s", vector->tid, TIDNAME(vector)); */
 
     // Let Bazel enforce list homogeneity in BUILD files
     /* treat first non-sym item as prototype, giving list type */
@@ -69,7 +69,6 @@ s7_pointer sunlark_vector_dispatcher(s7_scheme *s7,
     /* sunlark uses keywordized numbers to index, but s7 uses ints for
        thingslike iterations, so we need to support both. */
     bool int_idx = false;
-log_debug("68 xxxxxxxxxxxxxxxx");
     int idx = sunlark_is_nbr_kw(s7,op);
     if (errno == 0) { // op is a keywordized number
         int_idx = true;
@@ -82,7 +81,7 @@ log_debug("68 xxxxxxxxxxxxxxxx");
     if (int_idx) {
 
         /* int idx = s7_integer(op); */
-        log_debug("indexing on %d", idx);
+        /* log_debug("indexing on %d", idx); */
         struct node_s *nd = sealark_vector_item_for_int(datum, idx);
         return sunlark_new_node(s7, nd);
         /* int len = utarray_len(vector->subnodes); */

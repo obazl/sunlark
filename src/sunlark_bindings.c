@@ -609,8 +609,8 @@ s7_pointer sunlark_binding_component(s7_scheme *s7, struct node_s *binding,
                     = sealark_vector_item_for_int(val, ix);
                 return sunlark_new_node(s7,item);
             }
-            log_debug("indexing by value: %s",
-                      s7_object_to_c_string(s7, idx));
+            /* log_debug("indexing by value: %s", */
+            /*           s7_object_to_c_string(s7, idx)); */
             if (s7_is_string(idx)) {
                 UT_array *items     /* list of item nodes */
                     = sealark_vector_items_for_string(val, s7_string(idx));

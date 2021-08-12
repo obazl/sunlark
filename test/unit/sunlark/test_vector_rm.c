@@ -29,6 +29,9 @@ int main(void) {
 static char *int_veca = "'(:> \"int-vectors\" :@ int_veca :$)";
 /* **************************************************************** */
 void test_path_5_ivec_rm_first_item(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, int_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -63,9 +66,13 @@ void test_path_5_ivec_rm_first_item(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 void test_path_5_ivec_rm_item_1(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, int_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -99,9 +106,13 @@ void test_path_5_ivec_rm_item_1(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 void test_path_5_ivec_rm_last_item(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, int_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -135,9 +146,13 @@ void test_path_5_ivec_rm_last_item(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 void test_path_5_ivec_rm_all(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, int_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -185,6 +200,7 @@ void test_path_5_ivec_rm_all(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 /* **************************************************************** */
@@ -192,6 +208,9 @@ void test_path_5_ivec_rm_all(void) {
 static char *string_veca = "'(:> \"string-vectors\" :@ string_veca :$)";
 /* **************************************************************** */
 void test_path_5_svec_rm_first_item(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, string_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -226,9 +245,13 @@ void test_path_5_svec_rm_first_item(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 void test_path_5_svec_rm_item_1(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, string_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -263,9 +286,13 @@ void test_path_5_svec_rm_item_1(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 void test_path_5_svec_rm_last_item(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, string_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -300,10 +327,14 @@ void test_path_5_svec_rm_last_item(void) {
     path = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, path);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 /* ****************************** */
 void test_path_5_svec_rm_all(void) {
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
     path = s7_eval_c_string(s7, int_veca);
     s7_pointer vec = s7_apply_function(s7, pkg, path);
 
@@ -351,6 +382,7 @@ void test_path_5_svec_rm_all(void) {
     s7_pointer get = s7_eval_c_string(s7, verify);
     s7_pointer items = s7_apply_function(s7, pkg, get);
     TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, items) );
+    sunlark_dispose(s7,pkg);
 }
 
 /* **************************************************************** */

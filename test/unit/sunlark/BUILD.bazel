@@ -32,16 +32,16 @@ COPTS = select({
 }) + [
     "-pedantic-errors",
 
-        "-I$(GENDIR)/test/unit/sunlark",
-    "-I$(GENDIR)/external/sealark/test/unit/sunlark",
+    "-I$(GENDIR)/src",
+    "-I$(GENDIR)/external/sealark/src",
 
-    "-I$(GENDIR)/bindings/scheme",
-    "-I$(GENDIR)/external/sealark/bindings/scheme",
+    "-I$(GENDIR)/test/unit/sunlark",
+    "-I$(GENDIR)/external/sunlark/test/unit/sunlark",
 
-        "-I$(GENDIR)/sealark",
+    "-I$(GENDIR)/sealark",
     "-I$(GENDIR)/external/sealark/sealark",
 
-        "-Ivendored/logc",
+    "-Ivendored/logc",
     "-Iexternal/sealark/vendored/logc",
     "-Ivendored/s7",
     "-Iexternal/sealark/vendored/s7",
@@ -53,8 +53,8 @@ COPTS = select({
 
 DEPS = [
     ":common",
-    "//sealark",
-    "//bindings/scheme:sunlark",
+    "@sealark//sealark",
+    "//src:sunlark",
     "//vendored/logc",
     "//vendored/s7",
     "//vendored/unity",
@@ -250,8 +250,8 @@ cc_library(
         "//vendored/unity",
         "//vendored/uthash",
         "//vendored/logc",
-        "//sealark",
-        "//bindings/scheme:sunlark",
+        "@sealark//sealark",
+        "//src:sunlark",
     ]
 )
 
@@ -265,8 +265,8 @@ cc_library(
         "//vendored/unity",
         "//vendored/uthash",
         "//vendored/logc",
-        "//sealark",
-        "//bindings/scheme:sunlark",
+        "@sealark//sealark",
+        "//src:sunlark",
     ]
 )
 

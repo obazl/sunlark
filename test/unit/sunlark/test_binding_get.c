@@ -31,24 +31,10 @@ int main(void) {
     /* RUN_TEST(test_binding_srcs); */
     /* RUN_TEST(test_binding_key); */
     /* RUN_TEST(test_binding_value_selectors); */
-    RUN_TEST(test_binding_value_selector_dollar);
+    /* RUN_TEST(test_binding_value_selector_dollar); */
     /* RUN_TEST(test_binding_value_vector); */
     /* RUN_TEST(test_binding_predicate); */
     return UNITY_END();
-}
-
-/* **************************************************************** */
-void setUp(void) {
-    s7 = sunlark_init();
-    init_s7_syms(s7);
-    ast = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
-    root = s7_c_object_value(ast);
-}
-
-void tearDown(void) {
-    s7_quit(s7);
 }
 
 void test_forall_targets_forall_bindings(void) {
@@ -342,3 +328,18 @@ void test_binding_predicate(void) {
     struct node_s *item_node = s7_c_object_value(item);
     TEST_ASSERT( item_node->tid == TK_STRING );
 }
+
+/* **************************************************************** */
+void setUp(void) {
+    s7 = sunlark_init();
+    init_s7_syms(s7);
+    ast = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    root = s7_c_object_value(ast);
+}
+
+void tearDown(void) {
+    s7_quit(s7);
+}
+
