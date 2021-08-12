@@ -75,7 +75,7 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
     }
 
     struct node_s *target = sealark_new_node(TK_Call_Expr, with_subnodes);
-    struct node_s *node = sealark_new_node_s(TK_ID, rule_str);
+    struct node_s *node = sealark_new_s_node(TK_ID, rule_str);
     utarray_push_back(target->subnodes, node);
 
     struct node_s *call_sfx = sealark_new_node(TK_Call_Sfx, with_subnodes);
@@ -88,12 +88,12 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
     utarray_push_back(call_sfx->subnodes, arg_list);
 
     struct node_s *binding = sealark_new_node(TK_Binding, with_subnodes);
-    node = sealark_new_node_s(TK_ID, "name");
+    node = sealark_new_s_node(TK_ID, "name");
     node->line = ++line; node->col = indent;
     utarray_push_back(binding->subnodes, node);
     node = sealark_new_node(TK_EQ, without_subnodes);
     utarray_push_back(binding->subnodes, node);
-    node = sealark_new_node_s(TK_STRING, s7_string(name));
+    node = sealark_new_s_node(TK_STRING, s7_string(name));
     utarray_push_back(binding->subnodes, node);
     utarray_push_back(arg_list->subnodes, binding);
 
