@@ -39,7 +39,7 @@ def cc_fetch_repos():
         remote = "https://github.com/obazl/sealark",
         # commit = "b1c40e1de81913a3c40e5948f78719c28152486d",
         # shallow_since = "1605101351 -0800"
-        branch = "dev"
+        branch = "main"
     )
 
     # http://www.throwtheswitch.org/unity
