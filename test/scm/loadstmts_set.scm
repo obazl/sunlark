@@ -14,12 +14,12 @@
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :args))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg :0))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg "arg0c"))
-
+         ;; (v (pkg :load :0 :arg 0))
          )
     ;; set! args:
 
-    (set! (pkg :> :0 :@ 1) (make-binding 'key1 "hello")) ;; first by int
-    ;; (set! (pkg :load :0 :arg 0) "hello") ;; first by int
+    ;; (set! (pkg :> :0 :@ 1) (make-binding 'key1 "hello")) ;; first by int
+    (set! (pkg :load :0 :arg 0) "hello") ;; first by int
 
     ;; (set! (pkg :load :0 :arg :0) :null) ;; first by kwint
     ;; (set! (pkg :load :0 :arg "arg0a") :null) ;; first by str

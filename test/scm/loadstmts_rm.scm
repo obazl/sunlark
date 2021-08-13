@@ -2,8 +2,8 @@
 (newline)
 
 
-(define (test-loadstmt-rm pkg)
-  (display "test-loadstmt-rm")
+(define (test-loadstmts-rm pkg)
+  (display "test-loadstmts-rm")
   (newline)
   (let* (
          ;; data: test/buildfiles/BUILD.loadstmts
@@ -37,12 +37,18 @@
     ;;(set! (pkg :load :2 :arg "arg2c") :null) ;; last by str
     ;; (set! (pkg :load :2 :arg "Xyz") :null) ;; not found
 
-    ;; remove bindings/attrs:
+    ;; remove bindings/attrs: using :@ (or :attr or :binding), not :arg
     ;; (set! (pkg :load :2 :attrs) :null) ;; rm all args
 
-    (set! (pkg :load :2 :@ 0) :null) ;; first by int
+    ;; (set! (pkg :load :2 :@ 0) :null) ;; first by int
     ;; (set! (pkg :load :2 :@ :0) :null) ;; first by kwint
     ;; (set! (pkg :load :2 :@ 'key0c) :null) ;; first by sym
+
+    ;; (set! (pkg :load :2 :@ -1) :null) ;; last by int
+    (set! (pkg :load :2 :@ :-1) :null) ;; last by kwint
+    ;; (set! (pkg :load :2 :@ 'lastkey2c) :null) ;; last by sym
+
+
     ;; (set! (pkg :load "@rules_cc//cc:defs.bzl" :arg 0) :null)
     ;; (set! (pkg :load :0 :arg :0) :null) ;; first by kwint
     ;; (set! (pkg :load :0 :arg "arg0a") :null) ;; first by str
