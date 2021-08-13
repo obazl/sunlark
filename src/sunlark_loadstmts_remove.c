@@ -158,21 +158,45 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
                     }
                     log_error("Bad arg: %s", s7_object_to_c_string(s7, selector));
                     }
-                } else {
-                    if (s7_is_string(op2)) {
-                        log_debug("loadstmt rm arg at %s", s7_object_to_c_string(s7, op2));
-                        return NULL;
-                    }
-                    log_error("Bad arg: %s", s7_object_to_c_string(s7, selector));
-                    return NULL;
                 }
+                if (s7_is_string(op2)) {
+                        log_error("loadstmt rm arg at %s", s7_object_to_c_string(s7, op2));
+                        return NULL;
+                }
+                /*     log_error("Bad arg: %s", s7_object_to_c_string(s7, selector)); */
+                /*     return NULL; */
+                /* } */
 
                 if (op2 == KW(args)) {
-                    log_debug("1 xxxxxxxxxxxxxxxx");
                     sealark_loadstmt_rm_args(loadstmt);
                 }
                 if (op2 == KW(binding) || op2 == KW(@)) {
-                    sealark_loadstmt_rm_args(loadstmt);
+                    log_debug("accessing attr");
+                    /* (:i :@) + selector */
+                    /* selector must be int, kwint, or sym (binding key) */
+                    idx = sunlark_kwindex_to_int(s7, selector);
+                    if (errno == 0) { // int or kwint
+                        log_debug("removing attr at %d", idx);
+                        errno == 0;
+                        sealark_loadstmt_rm_attr_at_int(loadstmt, idx);
+                        if (errno == 0)
+                            return s7_unspecified(s7);
+                        else
+                            return NULL;
+                    } else {
+                        log_debug("indexing by %s", s7_object_to_c_string(s7, selector));
+                        if (s7_is_symbol(selector)) {
+                            errno == 0;
+                            sealark_loadstmt_rm_attr_at_sym(loadstmt,
+                                                s7_symbol_name(selector));
+                            if (errno == 0)
+                                return s7_unspecified(s7);
+                            else
+                                return NULL;
+                        } else {
+                            log_error("Help!");
+                        }
+                    }
                 }
             }
             return NULL;
