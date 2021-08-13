@@ -69,7 +69,7 @@ int main(void) {
 /* **************************************************************** */
 void test_all_loadstmts(void) {
     s7_pointer path = s7_eval_c_string(s7,
-                       "'(:loads)");
+                       "'(:loadstmts)");
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
 
     TEST_ASSERT( ! s7_is_c_object(loadstmts) );

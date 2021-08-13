@@ -65,6 +65,7 @@
          )
     ;; rm all loadstmts:
     ;; (set! (pkg :loadstmts) :null)
+    ;; (set! (pkg :loadstmts :*) :null)
 
     ;; remove first loadstmt:
     ;; (set! (pkg :load 0) :null) ;; by int index
@@ -80,10 +81,12 @@
     ;; (set! (pkg :load :0 :args) :null) ;; rm all args
 
     ;; (set! (pkg :load :0 :arg 0) :null) ;; first by int
+    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl" :arg 0) :null)
     ;; (set! (pkg :load :0 :arg :0) :null) ;; first by kwint
     ;; (set! (pkg :load :0 :arg "arg0a") :null) ;; first by str
 
     ;;(set! (pkg :load :2 :arg -1) :null) ;; last by int
+    ;;(set! (pkg :load "@repoc//pkgc:targetc.bzl" :arg 0) :null)
     ;;(set! (pkg :load :2 :arg :-1) :null) ;; last by kwint
     ;;(set! (pkg :load :2 :arg :5) :null) ;; index out of bound
     ;;(set! (pkg :load :2 :arg "arg2c") :null) ;; last by str

@@ -113,7 +113,8 @@ s7_pointer sunlark_pkg_remove(s7_scheme *s7, struct node_s *self_node,
                 }
             }
             /* (set! (pkg :load :*) :null) */
-            if (s7_car(get_path) == KW(load)) {
+            if ( (s7_car(get_path) == KW(loadstmts))
+                 || (s7_car(get_path) == KW(load)) ) {
                 if (selector == s7_make_keyword(s7, "*")) {
                     /* if (update_val == KW(null)) { */
                         result = sealark_pkg_remove_all_loadstmts(self_node);
