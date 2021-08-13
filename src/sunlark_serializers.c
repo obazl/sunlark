@@ -37,36 +37,50 @@ EXPORT s7_pointer sunlark_to_string(s7_scheme *s7, s7_pointer args)
 {
 #if defined(DEBUG_SERIALIZERS)
     log_debug(">>>>>>>>>>>>>>>> sunlark_to_string <<<<<<<<<<<<<<<<");
-    /* log_debug("args: %s", s7_object_to_c_string(s7, args)); */
+    log_debug("(car args): %s", s7_object_to_c_string(s7, s7_car(args)));
+    /* s7_pointer x = s7_car(args); */
+    /* struct node_s *xnd = s7_c_object_value(x); */
+    /* log_debug("self: %d %s", xnd->tid, TIDNAME(xnd)); */
+    log_debug("(cdr args): %s", s7_object_to_c_string(s7, s7_cdr(args)));
 #endif
 
     s7_pointer obj = s7_car(args);
-    if (!s7_is_c_object(obj)) {
-        log_error("sunlark->string can only serialize sunlark nodes; got arg of type %s",
-                  s7_object_to_c_string(s7, s7_type_of(s7, obj)));
-        return handle_errno(s7, EINVALID_SERIALIZE_ARG,
-                            s7_type_of(s7, obj));
-    }
-
     s7_pointer syntax;
     if (s7_cadr(args) == KW(ast)) {
+        if (!s7_is_c_object(obj)) {
+            log_error("sunlark->string :ast can only serialize sunlark nodes; got arg of type %s",
+                      s7_object_to_c_string(s7, s7_type_of(s7, obj)));
+                      return handle_errno(s7, EINVALID_SERIALIZE_AST,
+                                s7_type_of(s7, obj));
+        }
+
         UT_string *buf = sealark_debug_display_ast_outline(s7_c_object_value(obj), 0);
         s7_pointer disp = s7_make_string(s7, utstring_body(buf));
         utstring_free(buf);
         return disp;
     }
+
     if (s7_cadr(args) == KW(starlark)) {
+        if (!s7_is_c_object(obj)) {
+            log_error("sunlark->string :starlark can only serialize sunlark nodes; got arg of type %s",
+                      s7_object_to_c_string(s7, s7_type_of(s7, obj)));
+                      return handle_errno(s7, EINVALID_SERIALIZE_STARLARK,
+                                s7_type_of(s7, obj));
+        }
+
         s7_pointer _args;
         if (s7_list_length(s7, args) == 3) {
-            _args = s7_list(s7, 2, s7_car(args), s7_caddr(args));
+            /* :crush, :squeeze */
+            _args = s7_list(s7, 2, obj, s7_caddr(args));
         } else {
-            _args = s7_list(s7, 1, s7_car(args));
+            _args = s7_list(s7, 1, obj);
         }
         s7_pointer p = sunlark_to_starlark(s7, _args);
         return p;
     }
-    if (s7_cadr(args) == KW(scheme)) {
-        return s7_make_string(s7, "SCHEME");
+
+    if (s7_cadr(args) == KW(write)) {
+        return sunlark_display(s7, s7_list(s7, 1, obj));
     }
     log_error("Syntax specifier not recognizable: %s",
               s7_object_to_c_string(s7, s7_cadr(args)));
@@ -80,13 +94,15 @@ void sunlark_register_to_string_entry_pt(s7_scheme *s7)
 }
 
 /* Scheme entry point for object->string */
-/* WARNING: called by s7_object_to_c_string - do not call directly  */
+/* WARNING: called by s7_object_to_c_string - do not call directly? */
+/* (car args): obj to display; */
+/* optional (cadr args): #f or :display, #t or :write, or :readable */
 LOCAL s7_pointer sunlark_display(s7_scheme *s7, s7_pointer args)
 {
 #ifdef DEBUG_SERIALIZERS
     log_debug(">>>>>>>>>>>>>>>> sunlark_display <<<<<<<<<<<<<<<<");
+    log_debug("args ct: %d", s7_list_length(s7, args));
 #endif
-
     /* if (sunlark_node_tid(s7,s7_car(args)) == TK_Package) { */
     /*     return s7_nil(s7); */
     /* } */
@@ -121,10 +137,12 @@ LOCAL s7_pointer sunlark_display(s7_scheme *s7, s7_pointer args)
     }
     else {
         /* descr = sunlark_node_display(s7, s7_c_object_value(obj)); */
-        sunlark_display_node(s7_c_object_value(obj), buffer, 0);
+        if (s7_is_c_object(obj)) {
+            sunlark_display_node(s7_c_object_value(obj), buffer, 0);
+            obj = s7_make_string(s7, utstring_body(buffer));
+        } else
+            obj = s7_object_to_string(s7, obj, true);
     }
-
-    obj = s7_make_string(s7, utstring_body(buffer));
     /* obj = s7_make_string(s7, descr); */
 
     /* free(descr); // frees display_buf? */
@@ -241,7 +259,7 @@ EXPORT s7_pointer sunlark_to_starlark(s7_scheme *s7, s7_pointer args)
 {
 #if defined(DEBUG_SERIALIZERS)
     log_debug(">>>>>>>>>>>>>>>> sunlark_to_starlark <<<<<<<<<<<<<<<<");
-    log_debug("args: %s", s7_object_to_c_string(s7, args));
+    /* log_debug("args: %s", s7_object_to_c_string(s7, args)); */
     log_debug("args type: %s", s7_object_to_c_string(s7, s7_type_of(s7, args)));
 #endif
 
@@ -251,8 +269,9 @@ EXPORT s7_pointer sunlark_to_starlark(s7_scheme *s7, s7_pointer args)
     s7_pointer form = s7_car(args); // what to print
 
     s7_pointer style = s7_cadr(args);
-    /* log_debug("style: %s", s7_object_to_c_string(s7, style)); */
-
+#if defined(DEBUG_SERIALIZERS)
+    log_debug("style: %s", s7_object_to_c_string(s7, style));
+#endif
     if ( s7_is_c_object(form) ) {
         struct node_s *n1 = s7_c_object_value(form);
         sealark_node_to_starlark(n1, buf);
