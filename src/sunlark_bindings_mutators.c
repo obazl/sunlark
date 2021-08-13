@@ -610,41 +610,42 @@ struct node_s *sunlark_arglist_mutate(s7_scheme *s7,
         return NULL;
     }
 
-    if (s7_is_keyword(lval)) {
-        int idx = sunlark_kwindex_to_int(s7, lval);
-        if (errno == 0) {       // we got an int kw
-            return sunlark_mutate_arglist_at_int(s7, arglist,
-                                                 idx, update_val);
+    int idx = sunlark_kwindex_to_int(s7, lval);
+    if (errno == 0) {       // we got an int kw
+        /* if (s7_is_keyword(lval)) { */
+        return sunlark_mutate_arglist_at_int(s7, arglist,
+                                             idx, update_val);
+    } else {
+        if (errno == ENOT_A_KW) {
+            ; // log_debug("not a KW, continuing");
         } else {
-            if (errno == ENOT_A_KW) {
-                ; // log_debug("not a KW, continuing");
+            if (lval == KW(*)) {
+                /* log_debug("removing all bindings"); */
+                struct node_s *r
+                    = sealark_target_bindings_rm_all(arglist);
+                if (r)
+                    return r;
+                else
+                    return NULL;
             } else {
-                if (lval == KW(*)) {
-                    /* log_debug("removing all bindings"); */
-                    struct node_s *r
-                        = sealark_target_bindings_rm_all(arglist);
-                    if (r)
-                        return r;
-                    else
-                        return NULL;
-                } else {
-                    log_error("FIXME: non-nbr kw path op: %s",
-                              s7_object_to_c_string(s7, lval));
-                    exit(EXIT_FAILURE);
-                }
+                log_error("FIXME: non-nbr kw path op: %s",
+                          s7_object_to_c_string(s7, lval));
+                exit(EXIT_FAILURE);
             }
         }
     }
 
-    if (s7_is_integer(lval)) {
+    idx = sunlark_kwindex_to_int(s7, lval);
+    if (errno == 0) { // int or kwint
+    /* if (s7_is_integer(lval)) { */
         if (update_val == KW(null)) {
             /* log_debug("Removing binding at %s", */
             /*           s7_object_to_c_string(s7, lval)); */
             errno = 0;
             struct node_s *updated_node;
             updated_node
-                = sealark_arglist_rm_binding_for_int(arglist,
-                                                     s7_integer(lval));
+                = sealark_arglist_rm_binding_for_int(arglist, idx);
+                                                     /* s7_integer(lval)); */
             if (updated_node) {
                 return updated_node;
             } else {
