@@ -151,9 +151,11 @@ s7_pointer sunlark_loadstmt_arg_dispatcher(s7_scheme *s7,
     s7_pointer op = s7_car(path_args);
 
     /* **************** */
-    if (s7_is_integer(op)) {
+    int idx = sunlark_kwindex_to_int(s7, op);
+    if (errno == 0) { // int or kwint
+    /* if (s7_is_integer(op)) { */
         struct node_s *arg
-            = sealark_loadstmt_arg_for_int(loadstmt, s7_integer(op));
+            = sealark_loadstmt_arg_for_int(loadstmt, idx);//s7_integer(op));
         if (s7_is_null(s7, s7_cdr(path_args))) {
             if (arg) {
                 return sunlark_new_node(s7, arg);
@@ -350,8 +352,8 @@ LOCAL s7_pointer _loadstmt_binding_dispatcher(s7_scheme *s7,
 /* (car path_args): string (= src); int (index)  */
 /* return: node or list of nodes */
 s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
-                                                 struct node_s *pkg,
-                                                 s7_pointer path_args)
+                                         struct node_s *pkg,
+                                         s7_pointer path_args)
 {
 #if defined (DEBUG_TRACE) || defined(DEBUG_LOADS)
     log_debug(">> sunlark_pkg_loadstmt_dispatch %s",
@@ -361,11 +363,12 @@ s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
     assert(pkg->tid == TK_Package);
 
     s7_pointer op = s7_car(path_args);
-
+    log_debug("op: %s", s7_object_to_c_string(s7, op));
     /* **************** */
+    /* string == key */
     if (s7_is_string(op)) {
         struct node_s *loadstmt
-            = sealark_pkg_loadstmt_for_src(pkg, s7_string(op));
+            = sealark_pkg_loadstmt_for_key(pkg, s7_string(op));
         if (loadstmt) {
             if (s7_is_null(s7, s7_cdr(path_args))) {
                 return sunlark_new_node(s7, loadstmt);
@@ -380,10 +383,12 @@ s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
     }
 
     /* **************** */
-    if (s7_is_integer(op)) {
+    int idx = sunlark_kwindex_to_int(s7, op);
+    if (errno == 0) { // int or kwint
         struct node_s *loadstmt
-            = sealark_pkg_loadstmt_for_int(pkg, s7_integer(op));
-        if (loadstmt)
+            = sealark_pkg_loadstmt_for_int(pkg, idx); //s7_integer(op));
+        if (loadstmt) {
+            sealark_debug_log_ast_outline(loadstmt, 0);
             if (s7_is_null(s7, s7_cdr(path_args))) {
                 return sunlark_new_node(s7, loadstmt);
             } else {
@@ -391,9 +396,10 @@ s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
                     = _loadstmt_dispatch(s7, loadstmt, s7_cdr(path_args));
                 return result;
             }
-        else
+        } else
             return NULL;
     }
+
     log_error("Invalid arg: %s", s7_object_to_c_string(s7, path_args));
     errno = EINVALID_ARG_LOAD;
     return NULL;

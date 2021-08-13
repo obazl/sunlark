@@ -1,0 +1,238 @@
+#include "log.h"
+#include "utarray.h"
+#include "utstring.h"
+#include "unity.h"
+#include "s7.h"
+
+#include "sealark.h"
+#include "sunlark.h"
+
+#include "test_loadstmts_rm.h"
+
+char *build_file = "test/unit/sunlark/BUILD.loadstmts_rm";
+
+s7_scheme *s7;
+
+/**************/
+int main(void) {
+    UNITY_BEGIN();
+    RUN_TEST(test_rm_all_loadstmts);
+    RUN_TEST(test_rm_first_loadstmt_by_int);
+    RUN_TEST(test_rm_first_loadstmt_by_kwint);
+    RUN_TEST(test_rm_first_loadstmt_by_key);
+
+    RUN_TEST(test_rm_last_loadstmt_by_int);
+    RUN_TEST(test_rm_last_loadstmt_by_kwint);
+    RUN_TEST(test_rm_last_loadstmt_by_key);
+
+    /* RUN_TEST(test_local_rm_loadstmt_by_int); */
+
+    /* RUN_TEST(test_rm_loadstmt_val_item_by_int); */
+    return UNITY_END();
+}
+
+/* **************************************************************** */
+void test_rm_all_loadstmts(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :loadstmts)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 0, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+/* **************************************************************** */
+void test_rm_first_loadstmt_by_int(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :load 0)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+void test_rm_first_loadstmt_by_kwint(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :load :0)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+void test_rm_first_loadstmt_by_key(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :load \"@repoa//pkga:targeta.bzl\")";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+/* **************************************************************** */
+void test_rm_last_loadstmt_by_int(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :load -1)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+void test_rm_last_loadstmt_by_kwint(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :load :-1)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+void test_rm_last_loadstmt_by_key(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    char *s = "'(:loadstmts)";
+    s7_pointer path = s7_eval_c_string(s7, s);
+    s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    char *getter_s = "'(pkg :load \"@rules_cc//cc:defs.bzl\")";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer res = s7_apply_function(s7, set_bang,
+                                       s7_list(s7, 2,
+                                               getter,
+                                               s7_make_keyword(s7,"null")));
+
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( !s7_is_c_object(loadstmts) );
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, loadstmts) );
+    sunlark_dispose(s7,pkg);
+}
+
+/* **************************************************************** */
+void setUp(void) {
+    s7 = sunlark_init();
+    init_s7_syms(s7);
+
+    /* trap error messages */
+    old_port = s7_set_current_error_port(s7, s7_open_output_string(s7));
+    if (old_port != s7_nil(s7))
+        gc_loc = s7_gc_protect(s7, old_port);
+
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
+}
+
+void tearDown(void) {
+    s7_quit(s7);
+}
+

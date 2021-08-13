@@ -73,6 +73,10 @@ EXPORT int sealark_normalize_index(struct node_s *node, int index)
         errno = EINDEX_OUT_OF_BOUNDS;
         /* return NULL; */
     }
+#if defined (DEBUG_TRACE) || defined(DEBUG_VECTORS)
+    log_debug("\tnormalized: %d", index);
+#endif
+
     return index;
 }
 

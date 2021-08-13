@@ -397,4 +397,3 @@ void setUp(void) {
 void tearDown(void) {
     s7_quit(s7);
 }
-

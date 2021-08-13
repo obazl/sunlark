@@ -18,6 +18,8 @@ cc_library(
     strip_include_prefix = "include",
 )
 
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 cc_library(
     name = "unbox-tuple-instances",
     testonly = 1,

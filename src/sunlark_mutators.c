@@ -171,34 +171,39 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
     struct node_s *result;
 
     /* getter (pkg :> sel): get_path :>, sel: sel */
-    if (s7_list_length(s7, get_path) < 2) {
+    /*  (set! (pkg :load :0) :null) */
+    /*  (set! (pkg :load :0 :args :0) :null) - problem, context not parent */
+    if (update_val == KW(null)) {
+        if (KW(load) == s7_car(get_path)) {
+            errno = 0;
+            s7_pointer rc
+                = sunlark_loadstmts_remove(s7, self_node, s7_cdr(get_path),
+                                         selector);
+            if (rc == NULL)
+                return handle_errno(s7, errno, s7_list(s7,2,get_path,selector));
+            else
+                return rc;
+        }
+
         if (self_node->tid == TK_Package) {
-            if (update_val == KW(null)) {
-                /* case: (set! (pkg :>>) :null) - rm all targets */
-                /* case: (set! (pkg :> :*) :null) - rm all targets */
-                /* case: (set! (pkg :> "hello-lib") :null) - rm target */
-                /* case: (set! (pkg :> :0) :null) - rm target */
-                /* ditto for :load, :loads */
-                if (s7_is_null(s7, selector)) {
-                    log_error("Getter must include a selector");
-                    return handle_errno(s7, EMISSING_GET_SELECTOR, s7_nil(s7));
-                    return NULL;
-                }
-                return sunlark_remove(s7, self, get_path, selector);
-            }
-            /* case: (set! (pkg :> :0) #>(newtarg ...f)) - replace target */
-            if (s7_car(get_path) == KW(>)) {
-                result = sunlark_pkg_target_mutate(s7, self_node,
-                                                    selector,
-                                                    update_val);
-                /* sealark_debug_log_ast_outline(result, 0); */
-                if (result)
-                    return sunlark_new_node(s7, result);
-                else
-                    return handle_errno(s7, ENOT_IMPLEMENTED, s7_cdr(args));
+            if (s7_list_length(s7, get_path) < 2) {
+                return
+                    sunlark_pkg_remove(s7, self_node, get_path, selector);
             }
         }
     }
+
+        /* case: (set! (pkg :> :0) #>(newtarg ...f)) - replace target */
+        /* if (s7_car(get_path) == KW(>)) { */
+        /*     result = sunlark_pkg_target_mutate(s7, self_node, */
+        /*                                        selector, */
+        /*                                        update_val); */
+        /*     /\* sealark_debug_log_ast_outline(result, 0); *\/ */
+        /*     if (result) */
+        /*         return sunlark_new_node(s7, result); */
+        /*     else */
+        /*         return handle_errno(s7, ENOT_IMPLEMENTED, s7_cdr(args)); */
+        /* } */
 
     /* resolve context */
 
@@ -215,17 +220,26 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
                                                         s7_cons(s7,
                                                                 self,
                                                                 get_path));
-    struct node_s *context_node = s7_c_object_value(context);
-    /* log_debug("object_applicator returned context node: %d %s", */
-    /*           context_node->tid, TIDNAME(context_node)); */
 
 #if defined(DEBUG_SET)
+    log_debug("set_bang resuming after sunlark_node_object_applicator");
     log_debug("getter self: %d %s", self_node->tid, TIDNAME(self_node));
-    /* log_debug("RESOLVED context:"); */
+    log_debug("RESOLVED context: %s", s7_object_to_c_string(s7, context));
+    if (s7_is_list(s7, context)) {
+        s7_pointer item = s7_car(context);
+        sealark_debug_log_ast_outline(s7_c_object_value(item), 0);
+    }
     /* sunlark_debug_print_node(s7, context_node); */
     /* sealark_debug_print_node_starlark(context_node, true); // crush */
     /* sealark_debug_log_ast_outline(context_node, true); // crush */
 #endif
+
+    /* WARN: context may be a node, or a list of nodes, or ???
+     */
+
+    struct node_s *context_node = s7_c_object_value(context);
+    /* log_debug("object_applicator returned context node: %d %s", */
+    /*           context_node->tid, TIDNAME(context_node)); */
 
     /* switch(self_node->tid) { */
     switch(context_node->tid) {
@@ -396,7 +410,7 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
                   s7_object_to_c_string(s7, update_val));
 #endif
         sunlark_vector_mutate_dispatch(s7, context_node,
-                                                selector, update_val);
+                                       selector, update_val);
         /* if (result) */
         /*     return sunlark_new_node(s7, result); */
         /* else */

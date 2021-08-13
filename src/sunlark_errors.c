@@ -46,10 +46,16 @@ s7_pointer handle_errno(s7_scheme *s7, int errorno, s7_pointer path_args)
                         "Selector ~A in getter expr is invalid  here."),
                                 path_args)));
         break;
-    case EINVALID_SERIALIZE_ARG:
+    case EINVALID_SERIALIZE_AST:
         return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
                         s7_list(s7, 2, s7_make_string(s7,
-                        "Can only serialize sunlark nodes; got arg of type: ~A"),
+       "Serialization with :ast only works for sunlark nodes; got arg of type: ~A; try (display obj) or (sunlark->string obj :write)?"),
+                                path_args)));
+        break;
+    case EINVALID_SERIALIZE_STARLARK:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+       "Serialization with :starlark only works for sunlark nodes; got arg of type: ~A; try (display obj) or (sunlark->string obj :write)?"),
                                 path_args)));
         break;
     case ENOT_FOUND:
