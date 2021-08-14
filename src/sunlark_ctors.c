@@ -116,6 +116,11 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
     /* iterate over attrs */
     s7_pointer attr;
     int attr_ct = s7_list_length(s7, attrs) - 1;
+    if (args_ct > 0 && attr_ct > 0) {
+        node = sealark_new_node(TK_COMMA, without_subnodes);
+        utarray_push_back(loadstmt->subnodes, node);
+    }
+
     i = 0;
     struct node_s *binding;
     while ( !s7_is_null(s7, attrs) ) {
@@ -135,6 +140,9 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
         i++;
         attrs = s7_cdr(attrs);
     }
+
+    node = sealark_new_node(TK_RPAREN, without_subnodes);
+    utarray_push_back(loadstmt->subnodes, node);
 
  resume:
     ;

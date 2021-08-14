@@ -48,9 +48,11 @@ LOCAL s7_pointer _loadstmt_dispatch(s7_scheme *s7,
     /* **************** */
     if (op == KW(arg)) { /* must be followed by selector */
         if (s7_is_null(s7, s7_cdr(path_args))) {
-            log_debug(":arg must be followed by selector");
-            errno = EMISSING_ARG_SELECTOR;
-            return NULL;
+            UT_array *args = sealark_loadstmt_args(loadstmt);
+            return nodelist_to_s7_list(s7, args);
+            /* log_debug(":arg must be followed by selector"); */
+            /* errno = EMISSING_ARG_SELECTOR; */
+            /* return NULL; */
         } else {
             errno = 0;
             s7_pointer arg
@@ -386,7 +388,7 @@ s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
     int idx = sunlark_kwindex_to_int(s7, op);
     if (errno == 0) { // int or kwint
         struct node_s *loadstmt
-            = sealark_pkg_loadstmt_for_int(pkg, idx); //s7_integer(op));
+            = sealark_pkg_loadstmt_for_int(pkg, idx);
         if (loadstmt) {
             sealark_debug_log_ast_outline(loadstmt, 0);
             if (s7_is_null(s7, s7_cdr(path_args))) {

@@ -9,10 +9,10 @@
 
           ;; (v (pkg :loadstmts))
 
-          ;; (v (pkg :load "@repoa//pkga:targeta.bzl"))
+          (v (pkg :load "@repoa//pkga:targeta.bzl"))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl"))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :args))
-          (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg :0))
+          ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg :0))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg "arg0c"))
 
 
@@ -25,6 +25,7 @@
 
          )
     ;;(display v) (newline)
-    (display (sunlark->string pkg :starlark :crush))
+    (display (sunlark->string v :ast))
+    ;; (display (sunlark->string pkg :starlark :crush))
     (newline)
     ))

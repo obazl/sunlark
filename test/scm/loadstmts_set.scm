@@ -28,35 +28,35 @@
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg :0))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg "arg0c"))
          ;; (v (pkg :load :0 :arg 0))
+         (ld1 (make-load "@repo_x//pkg_x:target_x.bzl"
+                                    :args '("a" "b")
+                                    :attrs (list #@(key1 "val1")
+                                                 #@(key2 "val2"))))
+         (ld2 (make-load "@repo_y//pkg_y:target_y.bzl"
+                                    :args '("c" "d")
+                                    :attrs (list #@(key3 "val3")
+                                                 #@(key4 "val4"))))
          )
+    ;; replace loadstmts
+    ;; (set! (pkg :load 2) newload)
+    ;; (set! (pkg :load :2) newload)
+    ;; (set! (pkg :load "@repoc//pkgc:targetc.bzl") newload)
+    ;; replace last:
+    ;; (set! (pkg :load -1) newload)
+    ;; (set! (pkg :load :-1) newload)
+
+    ;; splice in new loadstmts
+     (set! (pkg :load :0) (list ld1 ld2)) ;; splice at
+    ;;(set! (pkg :load :0) (vector ld1 ld2)) ;; splice after
+
     ;; set! args:
-
     ;; (set! (pkg :> :0 :@ 1) (make-binding 'key1 "hello")) ;; first by int
-    (set! (pkg :load :0 :arg 0) "hello") ;; first by int
-
-    ;; (set! (pkg :load :0 :arg :0) :null) ;; first by kwint
-    ;; (set! (pkg :load :0 :arg "arg0a") :null) ;; first by str
-
-    ;;(set! (pkg :load :2 :arg -1) :null) ;; last by int
-    ;;(set! (pkg :load :2 :arg :-1) :null) ;; last by kwint
-    ;;(set! (pkg :load :2 :arg :5) :null) ;; index out of bound
-    ;;(set! (pkg :load :2 :arg "arg2c") :null) ;; last by str
-    ;; (set! (pkg :load :2 :arg "Xyz") :null) ;; not found
-
-    ;; (set! (pkg :load 1 :binding :0) :null) ;; rm one binding
-
-    ;; remove first loadstmt:
-    ;; (set! (pkg :load 0) :null) ;; by int index
-    ;; (set! (pkg :load :0) :null) ;; by kwint
-    ;; (set! (pkg :load "@repoa//pkga:targeta.bzl") :null) ;; by key
-
-    ;; remove last loadstmt
-    ;; (set! (pkg :load -1) :null) ;; by int
-    ;; (set! (pkg :load :-1) :null) ;; by kwint
-    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl") :null) ;; by key
+    ;; (set! (pkg :load :0 :arg 0) "hello") ;; first by int
 
     ;;(display v) (newline)
-    (display (sunlark->string pkg :starlark :crush))
+    (pkg :format)
+    (display (sunlark->string pkg :starlark :squeeze))
+    ;; (display (sunlark->string pkg :ast))
     (newline)
     ))
 

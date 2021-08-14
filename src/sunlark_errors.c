@@ -46,6 +46,54 @@ s7_pointer handle_errno(s7_scheme *s7, int errorno, s7_pointer path_args)
                         "Expected int, kwint, or string, got ~A"),
                                 path_args)));
         break;
+    case EINVALID_LOAD_CTOR_ARGLIST:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "make-load arglist: string key, :args list of strings, :attrs list of attrs; got ~A"),
+                                path_args)));
+        break;
+    case EINVALID_LOAD_CTOR_KEY:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "First arg to make-load must be string key: ~A"),
+                                path_args)));
+        break;
+    case EINVALID_LOAD_CTOR_ARGS:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "make-load :args must be list of strings: ~A"),
+                                path_args)));
+        break;
+    case EINVALID_LOAD_CTOR_ATTRS:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "make-load :attrs must be list of bindings: ~A"),
+                                path_args)));
+        break;
+    case EINVALID_LOAD_CTOR_ATTR:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "make-load found non binding in :attrs list: ~A"),
+                                path_args)));
+        break;
+    case EINVALID_LOAD_SELECTOR:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                "Selector for :load must be int, kwint, or string: ~A"),
+                                path_args)));
+        break;
+    case EINVALID_LOAD_NEWVAL:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "set! load newval must be a :load-stmt: ~A"),
+                                path_args)));
+        break;
+    case ESPLICE_LOADSTMT_ARG:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                        "Splicing loadstmt args must be :load-stmt ~A"),
+                                path_args)));
+        break;
     case EINVALID_GET_SELECTOR:
         return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
                         s7_list(s7, 2, s7_make_string(s7,

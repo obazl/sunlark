@@ -908,7 +908,7 @@ LOCAL void _display_load_stmt(struct node_s *nd,
 
     char *src = sealark_loadstmt_src_string(nd);
 
-    utstring_printf(buffer, "%*s(def-load :src \"%s\"\n",
+    utstring_printf(buffer, "%*s(make-load :src \"%s\"\n",
                     level*indent, " ", src);
 
     _display_load_args(nd, buffer, level);

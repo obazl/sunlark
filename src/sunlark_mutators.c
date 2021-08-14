@@ -207,6 +207,11 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
 
     /* resolve context */
 
+    if (KW(load) == s7_car(get_path)) {
+        sunlark_set_load(s7, self_node, s7_cdr(get_path),
+                         selector, update_val);
+        return self;
+    }
 
     /* getter (pkg :> tsel :@ asel ...): len(get_path) > 1 */
 
@@ -217,9 +222,7 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
     /* case: (set! (t :@) :null) */
 
     s7_pointer context = sunlark_node_object_applicator(s7,
-                                                        s7_cons(s7,
-                                                                self,
-                                                                get_path));
+                                  s7_cons(s7, self, get_path));
 
 #if defined(DEBUG_SET)
     log_debug("set_bang resuming after sunlark_node_object_applicator");
@@ -236,6 +239,15 @@ s7_pointer sunlark_set_bang(s7_scheme *s7, s7_pointer args)
 
     /* WARN: context may be a node, or a list of nodes, or ???
      */
+
+    /* if (s7_is_c_object(context)) { */
+    /*     _handle_context(...); */
+    /* } else { */
+    /*     if (s7_is_list(s7, context)) { */
+    /*         /\* e.g. (pkg :load :0 :arg) returns list *\/ */
+    /*     } else { */
+    /*     } */
+    /* } */
 
     struct node_s *context_node = s7_c_object_value(context);
     /* log_debug("object_applicator returned context node: %d %s", */
