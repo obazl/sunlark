@@ -1,6 +1,19 @@
 (display "loading test/scm/loadstmts_set.scm")
 (newline)
 
+(define (test-make-load)
+  (display "test-make-load")
+  (newline)
+  (let* ((ld (make-load "@repo_x//pkg_x:target_x.bzl"
+                        :args '("a" "b")
+                        :attrs (list #@(key1 "val1")
+                                     #@(key2 "val2"))))
+         )
+    ;; (display (sunlark->string ld :starlark :crush))
+    (display (sunlark->string ld :ast))
+    (newline)
+    ))
+
 (define (test-loadstmts-set pkg)
   (display "test-loadstmts-set")
   (newline)

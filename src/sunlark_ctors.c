@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +14,140 @@ EXPORT void sunlark_dispose(s7_scheme *s7, s7_pointer _node)
 {
     struct node_s *node = s7_c_object_value(_node);
     sealark_dispose(node);
+}
+
+/* **************************************************************** */
+#if INTERFACE
+#define SUNLARK_MAKE_LOAD_HELP "(make-load) returns a new node of type :load-stmt"
+
+#define SUNLARK_MAKE_LOAD_FORMAL_PARAMS "key (args) (attrs)"
+
+/* make-load takes a string key, :args string list, :attrs list;  returns a node */
+#define SUNLARK_MAKE_LOAD_SIG s7_make_signature(s7, 3, s7_make_symbol(s7, "node?"), s7_make_symbol(s7, "string?"),s7_make_symbol(s7, "symbol?"))
+#endif
+// NB: the sig does not seem to have any effect
+
+/*
+0: TK_Load_Stmt[117] @0:0
+  1: TK_LOAD[53] @0:0
+  1: TK_LPAREN[54] @0:4
+  1: TK_STRING[79] @0:5    "@repoa//pkga:targeta.bzl"
+  1: TK_COMMA[15] @0:31
+  1: TK_STRING[79] @0:33    "arg0a"
+  1: TK_COMMA[15] @0:40
+  1: TK_STRING[79] @0:42    "arg1a"
+  1: TK_RPAREN[71] @0:49
+*/
+EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
+{
+#ifdef DEBUG_TRACE
+    log_debug("sunlark_make_load: %s",
+              s7_object_to_c_string(s7, s7_car(_args)));
+#endif
+
+    log_debug("sunlark-make-load args: %s",
+              s7_object_to_c_string(s7, _args));
+
+    if ( !s7_is_list(s7, _args) ) {
+        log_error("bad make-load args: %s", s7_object_to_c_string(s7, _args));
+        return handle_errno(s7, EINVALID_LOAD_CTOR_ARGLIST, _args);
+    }
+    if ( s7_list_length(s7, _args) != 3 ) {
+        return handle_errno(s7, EINVALID_LOAD_CTOR_ARGLIST, _args);
+    }
+
+    s7_pointer key = s7_car(_args);
+    log_debug("key: %s", s7_object_to_c_string(s7, key));
+    if ( !s7_is_string(key)) {
+        log_error("Load :key must be a string; got %s %s",
+                  s7_object_to_c_string(s7, s7_type_of(s7, key)),
+                  s7_object_to_c_string(s7, key));
+        return handle_errno(s7, EINVALID_LOAD_CTOR_KEY, _args);
+    }
+    const char *key_str = s7_string(key);
+    int key_len = strlen(key_str);
+
+    s7_pointer args = s7_cadr(_args);
+    log_debug("args: %s", s7_object_to_c_string(s7, args));
+    if ( !s7_is_list(s7, args) ) {
+        log_error("Load :args must be a list of strings: %s",
+                  s7_object_to_c_string(s7, args));
+        return handle_errno(s7, EINVALID_LOAD_CTOR_ARGS, _args);
+    }
+
+    s7_pointer attrs = s7_caddr(_args);
+    log_debug("attrs: %s", s7_object_to_c_string(s7, attrs));
+    if ( !s7_is_list(s7, attrs) ) {
+        log_error("Load :attrs must be a list of bindings: %s",
+                  s7_object_to_c_string(s7, attrs));
+        return handle_errno(s7, EINVALID_LOAD_CTOR_ARGS, attrs);
+    }
+
+    struct node_s *loadstmt = sealark_new_node(TK_Load_Stmt, with_subnodes);
+    struct node_s *node = sealark_new_node(TK_LOAD, without_subnodes);
+    utarray_push_back(loadstmt->subnodes, node);
+
+    node = sealark_new_node(TK_LPAREN, without_subnodes);
+    utarray_push_back(loadstmt->subnodes, node);
+
+    node = sealark_new_s_node(TK_STRING, key_str);
+    utarray_push_back(loadstmt->subnodes, node);
+
+    node = sealark_new_node(TK_COMMA, without_subnodes);
+    utarray_push_back(loadstmt->subnodes, node);
+
+    /* iterate over args */
+    s7_pointer arg;
+    int args_ct = s7_list_length(s7, args) - 1;
+    int i = 0;
+    while ( !s7_is_null(s7, args) ) {
+        arg = s7_car(args);
+        log_debug("arg: %s", s7_object_to_c_string(s7, arg));
+        node = sealark_new_s_node(TK_STRING, s7_string(arg));
+        utarray_push_back(loadstmt->subnodes, node);
+        if (i < args_ct) {
+            node = sealark_new_node(TK_COMMA, without_subnodes);
+            utarray_push_back(loadstmt->subnodes, node);
+        }
+        i++;
+        args = s7_cdr(args);
+    }
+
+    /* iterate over attrs */
+    s7_pointer attr;
+    int attr_ct = s7_list_length(s7, attrs) - 1;
+    i = 0;
+    struct node_s *binding;
+    while ( !s7_is_null(s7, attrs) ) {
+        attr = s7_car(attrs);
+        log_debug("attr: %s", s7_object_to_c_string(s7, attr));
+        assert( s7_is_c_object(attr) );
+        if (! s7_is_c_object(attr) ) {
+            return handle_errno(s7, EINVALID_LOAD_CTOR_ATTR, _args);
+        }
+        binding = s7_c_object_value(attr);
+        assert(binding->tid == TK_Binding);
+        utarray_push_back(loadstmt->subnodes, binding);
+        if (i < args_ct) {
+            node = sealark_new_node(TK_COMMA, without_subnodes);
+            utarray_push_back(loadstmt->subnodes, node);
+        }
+        i++;
+        attrs = s7_cdr(attrs);
+    }
+
+ resume:
+    ;
+    /* log_debug("new load: %d %s", */
+    /*           load->tid, TIDNAME(load)); */
+    /* sealark_debug_log_ast_outline(load, 0); */
+
+    s7_pointer new_ast_node_s7 = s7_make_c_object(s7, ast_node_t,
+                                                  (void *)loadstmt);
+
+    sunlark_register_c_object_methods(s7, new_ast_node_s7);
+
+    return new_ast_node_s7;
 }
 
 /* **************************************************************** */

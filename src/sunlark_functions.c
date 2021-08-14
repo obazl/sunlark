@@ -257,6 +257,13 @@ void sunlark_register_ast_node_fns(s7_scheme *s7)
                                  SUNLARK_MAKE_STRING_FORMAL_PARAMS,
                                  SUNLARK_MAKE_STRING_HELP);
 
+    s7_define_typed_function_star(s7, "make-load",
+                                  sunlark_make_load,
+                                  /* 4, 1, false, */
+                                  SUNLARK_MAKE_LOAD_FORMAL_PARAMS,
+                                  SUNLARK_MAKE_LOAD_HELP,
+                                  SUNLARK_MAKE_LOAD_SIG);
+
     s7_define_typed_function_star(s7, "make-target",
                                   sunlark_make_target,
                                   /* 4, 1, false, */
