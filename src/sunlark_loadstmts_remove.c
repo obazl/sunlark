@@ -130,7 +130,7 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
         s7_pointer op1 = s7_car(get_path);
         s7_pointer op2 = s7_cadr(get_path);
         int idx = sunlark_kwindex_to_int(s7, op1); // s7_car(get_path));
-        if (errno == 0) {
+        if (errno == 0) { // int or kwint
             struct node_s *loadstmt
                 = sealark_pkg_loadstmt_for_int(pkg_node, idx);
             if (loadstmt) {
@@ -201,9 +201,9 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
             }
             return NULL;
         }
+        errno = 0; // reset after sunlark_kwindex_to_int
         /* op1 not int nor kwint */
-        if (s7_is_string(op1)) {
-            log_error("IDX BY KEY");
+        if (s7_is_string(op1)) { // index for loadstmt in pkg
             struct node_s *loadstmt
                 = sealark_pkg_loadstmt_for_key(pkg_node, s7_string(op1));
             //FIXME: following is same as for int/kwint deref
@@ -218,72 +218,64 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
                         else
                             return NULL;
                     } else {
-                    if (s7_is_string(selector)) {
-                        const char *key = s7_string(selector);
-                        log_debug("loadstmt rm arg at %s", key);
-                        errno = 0;
-                        sealark_loadstmt_rm_arg_at_str(loadstmt, key);
-                        if (errno == 0)
-                            return s7_unspecified(s7);
-                        else
-                            return NULL;
+                        if (s7_is_string(selector)) {
+                            const char *key = s7_string(selector);
+                            log_debug("loadstmt rm arg at %s", key);
+                            errno = 0;
+                            sealark_loadstmt_rm_arg_at_str(loadstmt, key);
+                            if (errno == 0)
+                                return s7_unspecified(s7);
+                            else
+                                return NULL;
+                        }
+                        log_error("Bad arg: %s", s7_object_to_c_string(s7, selector));
+                    }
+                }
 
-                        return NULL;
-                    }
-                    log_error("Bad arg: %s", s7_object_to_c_string(s7, selector));
-                    }
-                } else {
-                    if (s7_is_string(op2)) {
-                        log_debug("loadstmt rm arg at %s", s7_object_to_c_string(s7, op2));
-                        return NULL;
-                    }
-                    log_error("Bad arg: %s", s7_object_to_c_string(s7, selector));
+                if (s7_is_string(op2)) {
+                    log_debug("loadstmt rm arg at %s", s7_object_to_c_string(s7, op2));
                     return NULL;
                 }
 
                 if (op2 == KW(args)) {
-                    log_debug("1 xxxxxxxxxxxxxxxx");
                     sealark_loadstmt_rm_args(loadstmt);
                 }
+
                 if (op2 == KW(binding) || op2 == KW(@)) {
-                    sealark_loadstmt_rm_args(loadstmt);
+                    /* (:load "tgt" :@ ...) */
+                    /* selector: int, kwint, or symbol */
+                    idx = sunlark_kwindex_to_int(s7, selector);
+                    if (errno == 0) { // int or kwint
+                        sealark_loadstmt_rm_attr_at_int(loadstmt, idx);
+                        if (errno == 0)
+                            return s7_unspecified(s7);
+                        else
+                            return NULL;
+                    } else {
+                        if (s7_is_symbol(selector)) {
+                            errno = 0;
+                            sealark_loadstmt_rm_attr_at_sym(loadstmt,
+                                              s7_symbol_name(selector));
+                            if (errno == 0)
+                                return s7_unspecified(s7);
+                            else
+                                return NULL;
+                        } else {
+                            log_error("Invalid arg: expected int, kwint, or symbol; got %s", s7_object_to_c_string(s7, selector));
+                            errno = EINVALID_LOAD_ARG;
+                            return NULL;
+                        }
+                    }
                 }
+                log_error("Invalid arg: expected :arg, :@, :attr, or :binding; got %s", s7_object_to_c_string(s7, selector));
+                errno = EINVALID_LOAD_ARG;
+                return NULL;
+
             }
-
         }
-
-        /* errno = 0; */
-        /* idx = sunlark_kwindex_to_int(s7, selector); */
-        /* if (errno == 0) { */
-        /*     result = sealark_pkg_remove_loadstmt_at_int(pkg_node, */
-        /*                                                 idx); */
-        /*     if (result) */
-        /*         return sunlark_new_node(s7, result); */
-        /*     else */
-        /*         return handle_errno(s7, errno, selector); */
-        /* } else { */
-        /*     /\* selector not a kw int, must be a string *\/ */
-        /*     if (s7_is_string(selector)) { */
-        /*         result */
-        /*             = sealark_pkg_remove_loadstmt_at_key( */
-        /*                                                  pkg_node, */
-        /*                                                  s7_string(selector)); */
-        /*         if (result) */
-        /*             return sunlark_new_node(s7, result); */
-        /*         else */
-        /*             return handle_errno(s7, errno, selector); */
-        /*     } else { */
-        /*         log_error("In this context :load must be followed by an int (or kw int) or string key"); */
-        /*         return handle_errno(s7, EINVALID_ARG, */
-        /*                             selector); */
-        /*     } */
-        log_error("special case: path == :load");
+        /* op1 not int, kwint, nor string  */
+        errno = EINVALID_LOAD_ARG;
+        log_error("op following :load must be int, kwint, or string");
         return NULL;
     }
-    /* /\* } *\/ */
-    /*     log_error("special case len(get_path) == 1 ..."); */
-    /* } */
- 
-    /* /\* case: (set! (pkg :load :0 :args :0) :null) - delete one arg *\/ */
-
 }
