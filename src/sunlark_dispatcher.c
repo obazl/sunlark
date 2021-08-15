@@ -99,7 +99,12 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
 #if defined(DEBUG_TRACE)
         log_debug("dispatching on TK_Load_Stmt");
 #endif
-        return sunlark_loadstmt_dispatch(s7, data, path_args);
+        s7_pointer result = sunlark_loadstmt_dispatch(s7, data, path_args);
+        if (last == s7_make_keyword(s7, "$")) {
+            return node_to_scheme(s7, s7_c_object_value(result));
+        } else {
+            return result;
+        }
         break;
 
     case TK_Call_Expr: /* build_target */

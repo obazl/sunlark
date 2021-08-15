@@ -29,7 +29,7 @@ int main(void) {
 
     /* ******** rm args from load stmts ******** */
     RUN_TEST(test_loadstmt_rm_all_args);
-    /* RUN_TEST(test_loadstmt_rm_all_args_star); */
+    RUN_TEST(test_loadstmt_rm_all_args_star);
 
     RUN_TEST(test_loadstmt_int_rm_first_arg_by_int);
     RUN_TEST(test_loadstmt_int_rm_first_arg_by_kwint);
@@ -94,12 +94,15 @@ void test_rm_all_loadstmts(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
+
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
     TEST_ASSERT( !s7_is_c_object(loadstmts) );
     TEST_ASSERT( s7_is_list(s7, loadstmts) );
     TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+            log_debug("0 xxxxxxxxxxxxxxxx");
 
     char *getter_s = "'(pkg :loadstmts)";
     s7_pointer getter = s7_eval_c_string(s7, getter_s);
@@ -121,6 +124,7 @@ void test_rm_all_loadstmts_star(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -148,6 +152,7 @@ void test_rm_first_loadstmt_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -174,6 +179,7 @@ void test_rm_first_loadstmt_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -200,6 +206,7 @@ void test_rm_first_loadstmt_by_key(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -227,6 +234,7 @@ void test_rm_last_loadstmt_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -253,6 +261,7 @@ void test_rm_last_loadstmt_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -279,6 +288,7 @@ void test_rm_last_loadstmt_by_key(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:loadstmts)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer loadstmts = s7_apply_function(s7, pkg, path);
@@ -306,6 +316,7 @@ void test_loadstmt_rm_all_args(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -333,6 +344,7 @@ void test_loadstmt_rm_all_args_star(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -359,6 +371,7 @@ void test_loadstmt_int_rm_first_arg_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -386,6 +399,7 @@ void test_loadstmt_int_rm_first_arg_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -413,6 +427,7 @@ void test_loadstmt_int_rm_first_arg_by_str(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -441,6 +456,7 @@ void test_loadstmt_kwint_rm_first_arg_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -468,6 +484,7 @@ void test_loadstmt_kwint_rm_first_arg_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -495,6 +512,7 @@ void test_loadstmt_kwint_rm_first_arg_by_str(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -523,6 +541,7 @@ void test_loadstmt_str_rm_first_arg_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -550,6 +569,7 @@ void test_loadstmt_str_rm_first_arg_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -577,6 +597,7 @@ void test_loadstmt_str_rm_first_arg_by_str(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -605,6 +626,7 @@ void test_loadstmt_int_rm_last_arg_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -632,6 +654,7 @@ void test_loadstmt_int_rm_last_arg_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -659,6 +682,7 @@ void test_loadstmt_int_rm_last_arg_by_str(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -687,6 +711,7 @@ void test_loadstmt_kwint_rm_last_arg_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -714,6 +739,7 @@ void test_loadstmt_kwint_rm_last_arg_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -741,6 +767,7 @@ void test_loadstmt_kwint_rm_last_arg_by_str(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -769,6 +796,7 @@ void test_loadstmt_str_rm_last_arg_by_int(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -796,6 +824,7 @@ void test_loadstmt_str_rm_last_arg_by_kwint(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -823,6 +852,7 @@ void test_loadstmt_str_rm_last_arg_by_str(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :args)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -851,6 +881,7 @@ void test_loadstmt_rm_all_attrs(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -878,6 +909,7 @@ void test_loadstmt_rm_all_attrs_star(void)
     pkg = sunlark_parse_build_file(s7,
                                    s7_list(s7, 1,
                                            s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -901,9 +933,7 @@ void test_loadstmt_rm_all_attrs_star(void)
 /* **************************************************************** */
 void test_loadstmt_int_rm_first_attr_by_int(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -926,9 +956,7 @@ void test_loadstmt_int_rm_first_attr_by_int(void)
 
 void test_loadstmt_int_rm_first_attr_by_kwint(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -951,9 +979,7 @@ void test_loadstmt_int_rm_first_attr_by_kwint(void)
 
 void test_loadstmt_int_rm_first_attr_by_sym(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -977,9 +1003,7 @@ void test_loadstmt_int_rm_first_attr_by_sym(void)
 /* **************** */
 void test_loadstmt_kwint_rm_first_attr_by_int(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1004,9 +1028,7 @@ void test_loadstmt_kwint_rm_first_attr_by_int(void)
 
 void test_loadstmt_kwint_rm_first_attr_by_kwint(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1031,9 +1053,7 @@ void test_loadstmt_kwint_rm_first_attr_by_kwint(void)
 
 void test_loadstmt_kwint_rm_first_attr_by_sym(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1059,9 +1079,7 @@ void test_loadstmt_kwint_rm_first_attr_by_sym(void)
 /* **************** */
 void test_loadstmt_str_rm_first_attr_by_int(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1086,9 +1104,7 @@ void test_loadstmt_str_rm_first_attr_by_int(void)
 
 void test_loadstmt_str_rm_first_attr_by_kwint(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1113,9 +1129,7 @@ void test_loadstmt_str_rm_first_attr_by_kwint(void)
 
 void test_loadstmt_str_rm_first_attr_by_sym(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1141,9 +1155,7 @@ void test_loadstmt_str_rm_first_attr_by_sym(void)
 /* **************** */
 void test_loadstmt_int_rm_last_attr_by_int(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1167,9 +1179,7 @@ void test_loadstmt_int_rm_last_attr_by_int(void)
 
 void test_loadstmt_int_rm_last_attr_by_kwint(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1193,9 +1203,7 @@ void test_loadstmt_int_rm_last_attr_by_kwint(void)
 
 void test_loadstmt_int_rm_last_attr_by_sym(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1220,9 +1228,7 @@ void test_loadstmt_int_rm_last_attr_by_sym(void)
 /* **************** */
 void test_loadstmt_kwint_rm_last_attr_by_int(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1246,9 +1252,7 @@ void test_loadstmt_kwint_rm_last_attr_by_int(void)
 
 void test_loadstmt_kwint_rm_last_attr_by_kwint(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1272,9 +1276,7 @@ void test_loadstmt_kwint_rm_last_attr_by_kwint(void)
 
 void test_loadstmt_kwint_rm_last_attr_by_sym(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1299,9 +1301,7 @@ void test_loadstmt_kwint_rm_last_attr_by_sym(void)
 /* **************** */
 void test_loadstmt_str_rm_last_attr_by_int(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1325,9 +1325,7 @@ void test_loadstmt_str_rm_last_attr_by_int(void)
 
 void test_loadstmt_str_rm_last_attr_by_kwint(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1351,9 +1349,7 @@ void test_loadstmt_str_rm_last_attr_by_kwint(void)
 
 void test_loadstmt_str_rm_last_attr_by_sym(void)
 {
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
+    _parse_pkg();
     char *s = "'(:load \"@repoc//pkgc:targetc.bzl\" :@@)";
     s7_pointer path = s7_eval_c_string(s7, s);
     s7_pointer args = s7_apply_function(s7, pkg, path);
@@ -1376,6 +1372,14 @@ void test_loadstmt_str_rm_last_attr_by_sym(void)
 }
 
 /* **************************************************************** */
+LOCAL void _parse_pkg(void)
+{
+    pkg = sunlark_parse_build_file(s7,
+                                   s7_list(s7, 1,
+                                           s7_make_string(s7, build_file)));
+    s7_define_variable(s7, "pkg", pkg);
+}
+
 void setUp(void) {
     s7 = sunlark_init();
     init_s7_syms(s7);
@@ -1385,10 +1389,10 @@ void setUp(void) {
     if (old_port != s7_nil(s7))
         gc_loc = s7_gc_protect(s7, old_port);
 
-    pkg = sunlark_parse_build_file(s7,
-                                   s7_list(s7, 1,
-                                           s7_make_string(s7, build_file)));
-    s7_define_variable(s7, "pkg", pkg);
+    /* pkg = sunlark_parse_build_file(s7, */
+    /*                                s7_list(s7, 1, */
+    /*                                        s7_make_string(s7, build_file))); */
+    /* s7_define_variable(s7, "pkg", pkg); */
 }
 
 void tearDown(void) {

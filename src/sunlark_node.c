@@ -368,11 +368,12 @@ s7_pointer sunlark_node_object_applicator(s7_scheme *s7, s7_pointer args)
     log_debug("\tSELF tid: %d %s",
               sunlark_node_tid(s7, s7_car(args)),
               token_name[sunlark_node_tid(s7, s7_car(args))][0]);
-    log_debug("\targs: %s",
-              s7_object_to_c_string(s7, s7_cdr(args)));
+
+    /* log_debug("\targs: %s", */
+    /*           s7_object_to_c_string(s7, s7_cdr(args))); */
 #endif
 #if defined(DEBUG_AST)
-    /* sealark_debug_log_ast_outline(s7_c_object_value(s7_car(args)), 0); */
+    sealark_debug_log_ast_outline(s7_c_object_value(s7_car(args)), 0);
 #endif
 
     s7_pointer self_s7 = s7_car(args);

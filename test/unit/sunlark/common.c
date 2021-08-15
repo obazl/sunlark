@@ -26,6 +26,9 @@ s7_pointer itemval;
 s7_pointer dexpr, dentry;
 s7_pointer result;
 s7_pointer count;
+s7_pointer args;
+s7_pointer arg;
+s7_pointer attrs;
 
 s7_pointer getter;
 

@@ -46,6 +46,12 @@ s7_pointer handle_errno(s7_scheme *s7, int errorno, s7_pointer path_args)
                         "Expected int, kwint, or string, got ~A"),
                                 path_args)));
         break;
+    case EINVALID_LOAD_ARG_VAL:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 2, s7_make_string(s7,
+                               "Expected string, got ~A"),
+                                path_args)));
+        break;
     case EINVALID_LOAD_CTOR_ARGLIST:
         return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
                         s7_list(s7, 2, s7_make_string(s7,

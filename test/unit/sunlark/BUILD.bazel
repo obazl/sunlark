@@ -11,8 +11,9 @@ test_suite(
         ":dictionary_get",
         ":dictionary_set",
         # ":definitions",
-        ":loadstmts",
+        ":loadstmts_get",
         ":loadstmts_rm",
+        ":loadstmts_set",
         ":make_binding",
         ":make_target",
         ":packages",
@@ -136,9 +137,9 @@ cc_test(
 )
 
 cc_test(
-    name = "loadstmts",
-    srcs = ["test_loadstmts.c", "test_loadstmts.h"],
-    data = [":BUILD.loadstmts"],
+    name = "loadstmts_get",
+    srcs = ["test_loadstmts_get.c", "test_loadstmts_get.h"],
+    data = [":BUILD.loadstmts_get"],
     copts = COPTS,
     deps = DEPS,
     linkstatic = 1
@@ -148,6 +149,15 @@ cc_test(
     name = "loadstmts_rm",
     srcs = ["test_loadstmts_rm.c", "test_loadstmts_rm.h"],
     data = [":BUILD.loadstmts_rm"],
+    copts = COPTS,
+    deps = DEPS,
+    linkstatic = 1
+)
+
+cc_test(
+    name = "loadstmts_set",
+    srcs = ["test_loadstmts_set.c", "test_loadstmts_set.h"],
+    data = [":BUILD.loadstmts_set"],
     copts = COPTS,
     deps = DEPS,
     linkstatic = 1
@@ -294,8 +304,9 @@ genrule(
         "test_common_props.c",
         "test_dictionary_get.c",
         "test_dictionary_set.c",
-        "test_loadstmts.c",
+        "test_loadstmts_get.c",
         "test_loadstmts_rm.c",
+        "test_loadstmts_set.c",
         "test_make_binding.c",
         "test_make_target.c",
         "test_packages.c",
@@ -317,8 +328,9 @@ genrule(
         "test_common_props.h",
         "test_dictionary_get.h",
         "test_dictionary_set.h",
-        "test_loadstmts.h",
+        "test_loadstmts_get.h",
         "test_loadstmts_rm.h",
+        "test_loadstmts_set.h",
         "test_make_binding.h",
         "test_make_target.h",
         "test_packages.h",
@@ -342,8 +354,9 @@ genrule(
         "    $(location validators.c) \\",
         "    $(location definitions.c) \\",
         "    $(location test_common_props.c) \\",
-        "    $(location test_loadstmts.c) \\",
+        "    $(location test_loadstmts_get.c) \\",
         "    $(location test_loadstmts_rm.c) \\",
+        "    $(location test_loadstmts_set.c) \\",
         "    $(location test_make_binding.c) \\",
         "    $(location test_make_target.c) \\",
         "    $(location test_packages.c) \\",

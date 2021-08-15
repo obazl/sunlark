@@ -18,16 +18,9 @@
   (display "test-loadstmts-set")
   (newline)
   (let* (
-         ;; data: test/buildfiles/BUILD.loadstmts
-
+         ;; data: test/buildfiles/BUILD.loadstmts_set
           ;; (v (pkg :loadstmts))
-
           ;; (v (pkg :load "@repoa//pkga:targeta.bzl"))
-          ;; (v (pkg :load "@repoc//pkgc:targetc.bzl"))
-          ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :args))
-          ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg :0))
-          ;; (v (pkg :load "@repoc//pkgc:targetc.bzl" :arg "arg0c"))
-         ;; (v (pkg :load :0 :arg 0))
          (ld1 (make-load "@repo_x//pkg_x:target_x.bzl"
                                     :args '("a" "b")
                                     :attrs (list #@(key1 "val1")
@@ -38,20 +31,25 @@
                                                  #@(key4 "val4"))))
          )
     ;; replace loadstmts
-    ;; (set! (pkg :load 2) newload)
-    ;; (set! (pkg :load :2) newload)
-    ;; (set! (pkg :load "@repoc//pkgc:targetc.bzl") newload)
+    ;; (set! (pkg :load 2) ld1)
+    ;; (set! (pkg :load :2) ld1)
+    ;; (set! (pkg :load "@repoc//pkgc:targetc.bzl") ld1)
     ;; replace last:
-    ;; (set! (pkg :load -1) newload)
-    ;; (set! (pkg :load :-1) newload)
+    ;; (set! (pkg :load -1) ld1)
+    ;; (set! (pkg :load :-1) ld1)
 
     ;; splice in new loadstmts
-     (set! (pkg :load :0) (list ld1 ld2)) ;; splice at
-    ;;(set! (pkg :load :0) (vector ld1 ld2)) ;; splice after
+    ;; first
+    ;; (set! (pkg :load 0) (list ld1 ld2)) ;; splice at
+    ;; (set! (pkg :load :0) (vector ld1 ld2)) ;; splice after
+    ;; (set! (pkg :load "@repoa//pkga:targeta.bzl") (list ld1 ld2))
+    ;; (set! (pkg :load "@repoa//pkga:targeta.bzl") (vector ld1 ld2))
 
-    ;; set! args:
-    ;; (set! (pkg :> :0 :@ 1) (make-binding 'key1 "hello")) ;; first by int
-    ;; (set! (pkg :load :0 :arg 0) "hello") ;; first by int
+    ;; last
+    ;; (set! (pkg :load 0) (list ld1 ld2)) ;; splice after
+    ;; (set! (pkg :load 0) (vector ld1 ld2)) ;; splice after
+    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl") (list ld1 ld2))
+    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl") (vector ld1 ld2))
 
     ;;(display v) (newline)
     (pkg :format)
@@ -60,56 +58,39 @@
     (newline)
     ))
 
-(define (test-loadstmt-set pkg)
-  (display "test-loadstmt-set")
+(define (test-loadstmt-args-set pkg)
+  (display "test-loadstmt-args-set")
   (newline)
   (let* (
          ;; data: test/buildfiles/BUILD.loadstmts
-
+         ;; (b1 (make-binding 'key1 "hello"))
+         ;; (b2 (make-binding 'key2 "goodbye"))
+         ;; (v (pkg :load :2 :arg 2))
+         ;; (v (v :$))
          )
-    ;; rm all loadstmts:
-    ;; (set! (pkg :loadstmts) :null)
-    ;; (set! (pkg :loadstmts :*) :null)
+    ;; (set! (pkg :load :0 :arg 0) "hello") ;; replace
+    ;; (set! (pkg :load :0 :arg :0) "hello") ;; replace
+    ;; (set! (pkg :load :0 :arg "arg0a") "hello") ;; replace
+    ;; (set! (pkg :load :0 :arg 99) "hello") ;; index out of bounds
+    ;; (set! (pkg :load :0 :arg (list "x")) "hello") ;; invalid arg
+    ;; (set! (pkg :load :0 :arg :foo) "hello") ;; invalid arg
 
-    ;; remove first loadstmt:
-    ;; (set! (pkg :load 0) :null) ;; by int index
-    ;; (set! (pkg :load :0) :null) ;; by kwint
-    ;; (set! (pkg :load "@repoa//pkga:targeta.bzl") :null) ;; by key
+    ;; (set! (pkg :load :2 :arg -1) "hello") ;; replace
+    ;; (set! (pkg :load :2 :arg -99) "hello") ;; out of bounds
+    ;; (set! (pkg :load :2 :arg :-1) "hello") ;; replace
+    ;; (set! (pkg :load :2 :arg :-99) "hello") ;; out of bounds
+    ;; (set! (pkg :load :2 :arg "arg2c") "hello") ;; replace
 
-    ;; remove last loadstmt
-    ;; (set! (pkg :load -1) :null) ;; by int
-    ;; (set! (pkg :load :-1) :null) ;; by kwint
-    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl") :null) ;; by key
+    ;; splicing
+    ;; (set! (pkg :load :2 :arg :0) (list "hi" "howdy")) ;; splice at
+    ;; (set! (pkg :load :2 :arg :-1) (list "hi" "howdy")) ;; splice at
 
-    ;; remove args:
-    ;; (set! (pkg :load :0 :args) :null) ;; rm all args
+    ;; (set! (pkg :load :0 :arg :0) (vector "hi" "howdy")) ;; splice after
+    ;; (set! (pkg :load :0 :arg :-1) (vector "hi" "howdy")) ;; splice after
+    (set! (pkg :load :1 :arg :-1) (vector "hi" "howdy")) ;; splice after
 
-    ;; (set! (pkg :load :0 :arg 0) :null) ;; first by int
-    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl" :arg 0) :null)
-    ;; (set! (pkg :load :0 :arg :0) :null) ;; first by kwint
-    ;; (set! (pkg :load :0 :arg "arg0a") :null) ;; first by str
-
-    ;;(set! (pkg :load :2 :arg -1) :null) ;; last by int
-    ;;(set! (pkg :load "@repoc//pkgc:targetc.bzl" :arg 0) :null)
-    ;;(set! (pkg :load :2 :arg :-1) :null) ;; last by kwint
-    ;;(set! (pkg :load :2 :arg :5) :null) ;; index out of bound
-    ;;(set! (pkg :load :2 :arg "arg2c") :null) ;; last by str
-    ;; (set! (pkg :load :2 :arg "Xyz") :null) ;; not found
-
-    ;; remove bindings/attrs:
-    ;; (set! (pkg :load :2 :attrs) :null) ;; rm all args
-
-    (set! (pkg :load :2 :@ 0) :null) ;; first by int
-    ;; (set! (pkg :load :2 :@ :0) :null) ;; first by kwint
-    ;; (set! (pkg :load :2 :@ 'key0c) :null) ;; first by sym
-    ;; (set! (pkg :load "@rules_cc//cc:defs.bzl" :arg 0) :null)
-    ;; (set! (pkg :load :0 :arg :0) :null) ;; first by kwint
-    ;; (set! (pkg :load :0 :arg "arg0a") :null) ;; first by str
-
-
-    ;; (set! (pkg :load 1 :binding :0) :null) ;; rm one binding
-
-    ;;(display v) (newline)
+    (pkg :format)
+    ;; (display v) (newline)
     (display (sunlark->string pkg :starlark :crush))
     (newline)
     ))

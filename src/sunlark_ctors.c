@@ -329,7 +329,7 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
 //FIXME: migrate C stuff to sealark
 EXPORT s7_pointer sunlark_make_binding(s7_scheme *s7, s7_pointer args)
 {
-#ifdef DEBUG_TRACE
+#ifdef DEBUG_CTORS
     log_debug("sunlark_make_binding: %s",
               s7_object_to_c_string(s7, s7_car(args)));
     log_debug("sunlark-make-binding args: %s",
@@ -449,7 +449,7 @@ struct node_s *_make_list_from_list(s7_scheme *s7,
                                          struct node_s *binding,
                                          s7_pointer val)
 {
-#ifdef DEBUG_TRACE
+#ifdef DEBUG_CTORS
     log_debug("_make_list_from_list");
 #endif
 
@@ -534,7 +534,7 @@ struct node_s *_make_list_from_vector(s7_scheme *s7,
                                       struct node_s *binding,
                                       s7_pointer val)
 {
-#ifdef DEBUG_TRACE
+#ifdef DEBUG_CTORS
     log_debug("_make_list_from_vector");
 #endif
 

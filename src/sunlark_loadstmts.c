@@ -88,7 +88,6 @@ LOCAL s7_pointer _loadstmt_dispatch(s7_scheme *s7,
 
     if (op == KW(bindings) || op == KW(@@) || op == KW(attrs)) {
         if (s7_is_null(s7, s7_cdr(path_args))) {
-            sealark_debug_log_ast_outline(loadstmt, 0);
             UT_array *bindings
                 = sealark_loadstmt_bindings(loadstmt);
             if (bindings) {
@@ -125,10 +124,20 @@ LOCAL s7_pointer _loadstmt_dispatch(s7_scheme *s7,
         }
     }
 
+    if (op == KW(key)) {
+        struct node_s *k = sealark_loadstmt_key(loadstmt);
+        if (s7_is_null(s7, s7_cdr(path_args))) {
+            return sunlark_new_node(s7,k);
+        }
+        if (s7_cadr(path_args) == s7_make_keyword(s7, "$")) {
+            log_error("$$$$$$$$$$$$$$$$");
+        }
+    }
+
     if (s7_is_keyword(op)) {
         s7_pointer result
             = sunlark_common_property_lookup(s7, loadstmt, op);
-        return result;
+       return result;
     }
 
     log_error("NOT YET: sunlark_loadstmt_select for %s",
@@ -390,7 +399,6 @@ s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
         struct node_s *loadstmt
             = sealark_pkg_loadstmt_for_int(pkg, idx);
         if (loadstmt) {
-            sealark_debug_log_ast_outline(loadstmt, 0);
             if (s7_is_null(s7, s7_cdr(path_args))) {
                 return sunlark_new_node(s7, loadstmt);
             } else {

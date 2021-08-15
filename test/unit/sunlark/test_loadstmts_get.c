@@ -8,9 +8,9 @@
 #include "sealark.h"
 #include "sunlark.h"
 
-#include "test_loadstmts.h"
+#include "test_loadstmts_get.h"
 
-char *build_file = "test/unit/sunlark/BUILD.loadstmts";
+char *build_file = "test/unit/sunlark/BUILD.loadstmts_get";
 
 int main(void) {
     UNITY_BEGIN();
