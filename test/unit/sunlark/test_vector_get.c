@@ -65,8 +65,6 @@ void test_vector_properties(void) {
     /* (item :$) => s7 (Scheme) int value */
     s7_pointer ival = s7_apply_function(s7, item,
                                         s7_eval_c_string(s7, "'(:$)"));
-    log_debug("ival t: %s",
-              s7_object_to_c_string(s7, s7_type_of(s7, ival)));
 
     pred = s7_f(s7);
     pred = s7_apply_function(s7, s7_name_to_value(s7, "integer?"),
@@ -140,15 +138,13 @@ void test_int_vector(void) {
     s7_pointer path = s7_eval_c_string(s7, "'(0)");
     s7_pointer item = s7_apply_function(s7, vec, path);
 
-    log_debug("item:\n%s", s7_object_to_c_string(s7, item));
-
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(item) );
     TEST_ASSERT( sunlark_node_tid(s7, item) == TK_INT );
 
     /* :$ returns typed value (all values stored as strings in AST) */
     s7_pointer ival = s7_apply_function(s7, item, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("ival: %s", s7_object_to_c_string(s7, ival));
+
     TEST_ASSERT( s7_is_integer(ival) );
     TEST_ASSERT_EQUAL_INT( 1, s7_integer(ival) );
 
@@ -175,8 +171,6 @@ void test_label_vector(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:targets 0 :bindings string_vec :value)");
     s7_pointer bvalue = s7_apply_function(s7, pkg, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );

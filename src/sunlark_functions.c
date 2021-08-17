@@ -63,7 +63,7 @@ static s7_pointer sunlark_node_ref_specialized(s7_scheme *s7, s7_pointer args)
 
     s7_pointer params = s7_cdr(args);
 
-    log_debug("get_target");
+    /* log_debug("get_target"); */
     /* may return c-objects (node, nodelist) or primitives (s7_integer) */
     /* s7_pointer get_target = sunlark_resolve_path(s7, self_s7, params); */
     /* if (s7_is_c_object(get_target)) { */
@@ -94,7 +94,7 @@ LOCAL s7_pointer sunlark_make_ast_node(s7_scheme *s7, s7_pointer args)
                                         without_subnodes);
 
     if (sunlark_node_init_from_s7(s7, n, args) != NULL) {
-        log_debug("OOPS");
+        log_error("FIXME OOPS");
     }
 
     s7_pointer new_ast_node_s7 = s7_make_c_object(s7, ast_node_t,
@@ -139,9 +139,8 @@ EXPORT s7_pointer sunlark_make_string(s7_scheme *s7, s7_pointer args)
 {
 #ifdef DEBUG_TRACE
     log_debug("sunlark_make_string");
-#endif
-
     log_debug("make-string args: %s", s7_object_to_c_string(s7, args));
+#endif
 
     struct node_s *nd = sealark_new_node(TK_STRING, without_subnodes);
 

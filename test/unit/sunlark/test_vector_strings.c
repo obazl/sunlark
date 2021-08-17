@@ -83,14 +83,13 @@ void test_string_vector(void) {
 
     /* TEST_ASSERT( is_s == s7_f(s7) ); */
     /* (item1 :print) => "a2" (Scheme string) */
-    s7_pointer item1_str = s7_apply_function(s7, item1,
-                                        s7_cons(s7,
-                                             s7_make_keyword(s7, "print"),
-                                             s7_nil(s7)));
-    log_debug("item1 str: %s", s7_object_to_c_string(s7, item1_str));
 
+    //FIXME
+    /* s7_pointer item1_str = s7_apply_function(s7, item1, */
+    /*                                     s7_cons(s7, */
+    /*                                          s7_make_keyword(s7, "print"), */
+    /*                                          s7_nil(s7))); */
     /* metadata: line, col */
-
 }
 
 /* **************************************************************** */

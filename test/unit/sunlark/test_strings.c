@@ -64,8 +64,6 @@ void test_binding_value_string_plain_dq(void) {
                        "'(:> 0 :@ plaindq :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
 
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
-
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
     TEST_ASSERT( sunlark_node_tid(s7, bvalue) == TK_STRING );
@@ -81,7 +79,7 @@ void test_binding_value_string_plain_dq(void) {
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
                             /* s7_cons(s7, s7_make_keyword(s7, "'(:$)"), */
                             /*         s7_nil(s7))); */
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "\"I am a plain double-quoted string\"",
@@ -92,8 +90,6 @@ void test_binding_value_string_plain_sq(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 0 :@ plainsq :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -108,7 +104,7 @@ void test_binding_value_string_plain_sq(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     //NB: string test compares only string content, not quote mark types
@@ -122,8 +118,6 @@ void test_binding_value_string_raw_dq(void) {
                        "'(:> 0 :@ rawdq :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
 
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
-
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
     TEST_ASSERT( sunlark_node_tid(s7, bvalue) == TK_STRING );
@@ -133,10 +127,9 @@ void test_binding_value_string_raw_dq(void) {
 
     /* verify qtype: single quote plain */
     TEST_ASSERT( !(bvalue_node->qtype & SQUOTE) );
-    
+
     /* use :$ to get a string value */
     s7_pointer bvalue_str = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "r\"I am a raw double-quoted string\"",
@@ -147,8 +140,6 @@ void test_binding_value_string_raw_sq(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 0 :@ rawsq :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -163,7 +154,7 @@ void test_binding_value_string_raw_sq(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "r'I am a raw single-quoted string'",
@@ -174,8 +165,6 @@ void test_binding_value_string_bin_dq(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 0 :@ bindq :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -190,7 +179,7 @@ void test_binding_value_string_bin_dq(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "b\"I am a binary double-quoted string\"",
@@ -201,8 +190,6 @@ void test_binding_value_string_bin_sq(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 0 :@ binsq :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -217,7 +204,7 @@ void test_binding_value_string_bin_sq(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "b'I am a binary single-quoted string'",
@@ -230,8 +217,6 @@ void test_binding_value_string_plain_dq3(void) {
                        "'(:> 1 :@ plaindq3 :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
 
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
-
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
     TEST_ASSERT( sunlark_node_tid(s7, bvalue) == TK_STRING );
@@ -245,7 +230,7 @@ void test_binding_value_string_plain_dq3(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "\"\"\"I am a plain triple double-quoted string\"\"\"",
@@ -256,8 +241,6 @@ void test_binding_value_string_plain_sq3(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 1 :@ plainsq3 :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -272,7 +255,7 @@ void test_binding_value_string_plain_sq3(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "'''I am a plain triple single-quoted string'''",
@@ -283,8 +266,6 @@ void test_binding_value_string_raw_dq3(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 1 :@ rawdq3 :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -299,7 +280,7 @@ void test_binding_value_string_raw_dq3(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "r\"\"\"I am a raw triple double-quoted string\"\"\"",
@@ -310,8 +291,6 @@ void test_binding_value_string_raw_sq3(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 1 :@ rawsq3 :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -326,7 +305,7 @@ void test_binding_value_string_raw_sq3(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "r'''I am a raw triple single-quoted string'''",
@@ -337,8 +316,6 @@ void test_binding_value_string_bin_dq3(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 1 :@ bindq3 :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -353,7 +330,7 @@ void test_binding_value_string_bin_dq3(void) {
     /* use :$ to get a string value */
     s7_pointer bvalue_str
         = s7_apply_function(s7, bvalue, s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "b\"\"\"I am a binary triple double-quoted string\"\"\"",
@@ -364,8 +341,6 @@ void test_binding_value_string_bin_sq3(void) {
     s7_pointer path = s7_eval_c_string(s7,
                        "'(:> 1 :@ binsq3 :value)");
     s7_pointer bvalue = s7_apply_function(s7, ast, path);
-
-    log_debug("bvalue:\n%s", s7_object_to_c_string(s7, bvalue));
 
     /* check type, tid */
     TEST_ASSERT( s7_is_c_object(bvalue) );
@@ -383,11 +358,11 @@ void test_binding_value_string_bin_sq3(void) {
         = s7_apply_function(s7,
                             s7_name_to_value(s7, "sunlark->starlark"),
                             s7_list(s7, 1, bvalue));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     bvalue_str
         = s7_apply_function(s7, bvalue,
                             s7_eval_c_string(s7, "'(:$)"));
-    log_debug("bvalue_s: %s", s7_object_to_c_string(s7, bvalue_str));
+
     TEST_ASSERT( !s7_is_c_object(bvalue_str) );
     TEST_ASSERT( s7_is_string(bvalue_str) );
     TEST_ASSERT_EQUAL_STRING( "b'''I am a binary triple single-quoted string'''",

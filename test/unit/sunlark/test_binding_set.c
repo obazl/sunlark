@@ -50,19 +50,15 @@ void test_binding_replace(void)
     s7_pointer newb = s7_eval_c_string(s7,
                              "(make-binding 'newb \"new str binding\")");
 
-    sealark_debug_log_ast_outline(s7_c_object_value(newb), 0);
-
     s7_pointer result = s7_apply_function(s7, set_bang,
                                           s7_list(s7, 2,
                                                   getter,
                                                   newb));
-    log_debug("xxxxxxxxxxxxxxxx %s", s7_object_to_c_string(s7, result));
+
     errmsg = s7_get_output_string(s7, s7_current_error_port(s7));
     if ((errmsg) && (*errmsg))
             log_error("ERROR [%s]", errmsg);
-
-    log_debug("After set!");
-    sealark_debug_log_ast_outline(s7_c_object_value(target), 0);
+    /* sealark_debug_log_ast_outline(s7_c_object_value(target), 0); */
     /* form = "'(:> \"string-list-dict\" :@ bdict)"; */
     /* path = s7_eval_c_string(s7, form); */
     /* result = s7_apply_function(s7, pkg, path); */

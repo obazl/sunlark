@@ -60,10 +60,10 @@ s7_pointer sunlark_parse_bzl_file(s7_scheme *s7,
 #endif
 
     struct node_s *pkg = sealark_parse_file(fname);
-    log_debug("parsed file %s", fname);
+    /* log_debug("parsed file %s", fname); */
     /* dump_node(parse_state->root); */
 
-    log_debug("converting ast");
+    /* log_debug("converting ast"); */
     s7_pointer ast = sunlark_ast2scm(s7, pkg);
     return ast;
 }
@@ -86,7 +86,7 @@ EXPORT s7_pointer sunlark_parse_string(s7_scheme *s7,
         }
     } else {
         if (s7_is_string(args)) {
-            log_debug("is_string? %d", s7_is_string(args));
+            /* log_debug("is_string? %d", s7_is_string(args)); */
             str = (char*)s7_string(args);
         }
     }

@@ -50,12 +50,12 @@ sunlark_set_load(s7_scheme *s7, struct node_s *pkg,
                     return s7_unspecified(s7);
                 } else {
                     if (s7_is_list(s7, newval)) {
-                        log_debug("splicing at %d", idx);
+                        /* log_debug("splicing at %d", idx); */
                         _loadstmt_splice_list(s7, pkg, idx, newval);
                         return s7_unspecified(s7);
                     } else {
                         if (s7_is_vector(newval)) {
-                            log_debug("splicing after %d", idx);
+                            /* log_debug("splicing after %d", idx); */
                             _loadstmt_splice_vector(s7, pkg, idx, newval);
                             return s7_unspecified(s7);
                         } else {
@@ -89,13 +89,13 @@ sunlark_set_load(s7_scheme *s7, struct node_s *pkg,
                         return handle_errno(s7, errno, selector);
 
                     if (s7_is_list(s7, newval)) {
-                        log_debug("splicing before %s",
-                                  s7_object_to_c_string(s7, selector));
+                        /* log_debug("splicing before %s", */
+                        /*           s7_object_to_c_string(s7, selector)); */
                         _loadstmt_splice_list(s7, pkg, idx, newval);
                         return s7_unspecified(s7);
                     } else {
                         if (s7_is_vector(newval)) {
-                            log_debug("splicing after %d", idx);
+                            /* log_debug("splicing after %d", idx); */
                             _loadstmt_splice_vector(s7, pkg, idx, newval);
                             return s7_unspecified(s7);
                         } else {
@@ -197,7 +197,7 @@ s7_pointer sunlark_loadstmt_set_dispatcher(s7_scheme *s7,
         } else {
             if (s7_is_string(selector)) {
                 if (s7_is_string(newval)) {
-                    log_debug("replacing string");
+                    /* log_debug("replacing string"); */
                     errno = 0;
                     sealark_loadstmt_replace_arg_at_str(loadstmt,
                                                         s7_string(selector),
@@ -209,12 +209,12 @@ s7_pointer sunlark_loadstmt_set_dispatcher(s7_scheme *s7,
                 } else {
                     idx = sealark_loadstmt_arg_idx_for_str(loadstmt,
                                                      s7_string(selector));
-                    log_debug("key: %s, idx: %d", s7_string(selector), idx);
+                    /* log_debug("key: %s, idx: %d", s7_string(selector), idx); */
                     if (idx < 0)
                         return handle_errno(s7, errno, selector);
 
                     if (s7_is_list(s7, newval)) {
-                        log_debug("splicing list at %d", idx);
+                        /* log_debug("splicing list at %d", idx); */
                         errno = 0;
                         _loadstmt_args_splice_list(s7, loadstmt, idx, newval);
                         if (errno == 0)
@@ -223,7 +223,7 @@ s7_pointer sunlark_loadstmt_set_dispatcher(s7_scheme *s7,
                             return handle_errno(s7, errno, selector);
                     } else {
                         if (s7_is_vector(newval)) {
-                            log_debug("splicing vector after %d", idx);
+                            /* log_debug("splicing vector after %d", idx); */
                             errno = 0;
                             _loadstmt_args_splice_vector(s7,
                                                          loadstmt, idx, newval);
@@ -252,7 +252,7 @@ s7_pointer sunlark_loadstmt_set_dispatcher(s7_scheme *s7,
         if (s7_is_string(newval)) {
             /* must be setting :key or :value */
             if (selector == KW(key) || selector == KW(value)) {
-                log_debug("replacing %s of binding", s7_object_to_c_string(s7, selector));
+                /* log_debug("replacing %s of binding", s7_object_to_c_string(s7, selector)); */
                 errno = 0;
                 _loadstmt_binding_replace_k_or_v(s7, loadstmt,
                                                  s7_cdr(get_path),
@@ -281,8 +281,8 @@ s7_pointer sunlark_loadstmt_set_dispatcher(s7_scheme *s7,
             if (s7_is_c_object(newval)) {
                 /* (set! (pkg :load i :@ b) <binding>) */
                 if (sunlark_node_tid(s7,newval) == TK_Binding) {
-                    log_debug("0 NEW BINDING: %s",
-                              s7_object_to_c_string(s7, newval));
+                    /* log_debug("0 NEW BINDING: %s", */
+                    /*           s7_object_to_c_string(s7, newval)); */
                     errno = 0;
                     sealark_loadstmt_replace_attr_at_int(loadstmt,
                                                             idx,
@@ -304,7 +304,6 @@ s7_pointer sunlark_loadstmt_set_dispatcher(s7_scheme *s7,
                 /*     return handle_errno(s7, errno, selector); */
             } else {
                 if (s7_is_list(s7, newval)) {
-log_debug("0 xxxxxxxxxxxxxxxx");
                     errno = 0;
                     _loadstmt_attrs_splice_list(s7, loadstmt, idx, newval);
                     if (errno == 0)
@@ -333,13 +332,13 @@ log_debug("0 xxxxxxxxxxxxxxxx");
                 // newval already vetted above
                 idx = sealark_loadstmt_attr_idx_for_str(loadstmt,
                                                s7_symbol_name(selector));
-                log_debug("key: %s, idx: %d",
-                          s7_symbol_name(selector), idx);
+                /* log_debug("key: %s, idx: %d", */
+                /*           s7_symbol_name(selector), idx); */
                 if (idx < 0)
                     return handle_errno(s7, errno, selector);
 
                 if (s7_is_c_object(newval)) {
-                        log_debug("replacing attr at %d", idx);
+                        /* log_debug("replacing attr at %d", idx); */
                         sealark_loadstmt_replace_attr_at_int(loadstmt,
                                                              idx,
                                                 s7_c_object_value(newval));
@@ -349,7 +348,7 @@ log_debug("0 xxxxxxxxxxxxxxxx");
                             return handle_errno(s7, errno, selector);
                 } else {
                     if (s7_is_list(s7, newval)) {
-                        log_debug("splicing list at %d", idx);
+                        /* log_debug("splicing list at %d", idx); */
                         errno = 0;
                         _loadstmt_attrs_splice_list(s7, loadstmt, idx, newval);
                         if (errno == 0)
@@ -357,9 +356,8 @@ log_debug("0 xxxxxxxxxxxxxxxx");
                         else
                             return handle_errno(s7, errno, selector);
                     } else {
-log_debug("1 xxxxxxxxxxxxxxxx");
                         if (s7_is_vector(newval)) {
-                            log_debug("splicing vector after %d", idx);
+                            /* log_debug("splicing vector after %d", idx); */
                             errno = 0;
                             _loadstmt_attrs_splice_vector(s7,
                                                          loadstmt, idx, newval);
@@ -380,7 +378,6 @@ log_debug("1 xxxxxxxxxxxxxxxx");
             }
         }
     }
-log_debug("9 xxxxxxxxxxxxxxxx");
     return NULL;
 }
 
@@ -404,7 +401,7 @@ LOCAL void _loadstmt_splice_list(s7_scheme *s7, struct node_s *pkg,
     /* normalize index - cannot use util routine since there is no
        args node type */
     int loadstmt_ct = sealark_pkg_loadstmt_count(pkg);
-    log_debug("loadstmt_ct: %d", loadstmt_ct);
+    /* log_debug("loadstmt_ct: %d", loadstmt_ct); */
     /* reverse indexing */
     if (index < 0) {
         if (abs(index) > loadstmt_ct) {
@@ -434,7 +431,7 @@ LOCAL void _loadstmt_splice_list(s7_scheme *s7, struct node_s *pkg,
     s7_pointer iter = s7_make_iterator(s7, splice);
     s7_pointer new_loadstmt = s7_iterate(s7, iter);
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
-        log_debug("splicing item %d", i);
+        /* log_debug("splicing item %d", i); */
         if ( !s7_is_c_object(new_loadstmt)) {
             log_error("Loadstmt :splice only accepts :loadstmt nodes; got: %s of type %s",
                       s7_object_to_c_string(s7, new_loadstmt),
@@ -487,7 +484,7 @@ LOCAL void _loadstmt_args_splice_list(s7_scheme *s7,
     /* normalize index - cannot use util routine since there is no
        args node type */
     int arg_ct = sealark_loadstmt_arg_count(loadstmt);
-    log_debug("arg_ct: %d", arg_ct);
+    /* log_debug("arg_ct: %d", arg_ct); */
     /* reverse indexing */
     if (index < 0) {
         if (abs(index) > arg_ct) {
@@ -517,7 +514,7 @@ LOCAL void _loadstmt_args_splice_list(s7_scheme *s7,
     s7_pointer iter = s7_make_iterator(s7, splice);
     s7_pointer new_arg = s7_iterate(s7, iter);
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
-        log_debug("splicing item %d", i);
+        /* log_debug("splicing item %d", i); */
         if ( !s7_is_string(new_arg)) {
             log_error("Loadstmt :arg splicing only accepts strings; got: %s of type %s",
                       s7_object_to_c_string(s7, new_arg),
@@ -569,7 +566,7 @@ LOCAL void _loadstmt_args_splice_vector(s7_scheme *s7,
     /* normalize index - cannot use util routine since there is no
        args node type */
     int arg_ct = sealark_loadstmt_arg_count(loadstmt);
-    log_debug("arg_ct: %d", arg_ct);
+    /* log_debug("arg_ct: %d", arg_ct); */
     /* reverse indexing */
     if (index < 0) {
         if (abs(index) > arg_ct) {
@@ -601,7 +598,7 @@ LOCAL void _loadstmt_args_splice_vector(s7_scheme *s7,
     s7_pointer iter = s7_make_iterator(s7, splice);
     s7_pointer new_arg = s7_iterate(s7, iter);
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
-        log_debug("splicing item %d", i);
+        /* log_debug("splicing item %d", i); */
         if ( !s7_is_string(new_arg)) {
             log_error("Loadstmt :arg splicing only accepts strings; got: %s of type %s",
                       s7_object_to_c_string(s7, new_arg),
@@ -658,7 +655,7 @@ LOCAL void _loadstmt_splice_vector(s7_scheme *s7, struct node_s *pkg,
     /* normalize index - cannot use util routine since there is no
        args node type */
     int loadstmt_ct = sealark_pkg_loadstmt_count(pkg);
-    log_debug("loadstmt_ct: %d", loadstmt_ct);
+    /* log_debug("loadstmt_ct: %d", loadstmt_ct); */
     /* reverse indexing */
     if (index < 0) {
         if (abs(index) > loadstmt_ct) {
@@ -691,7 +688,7 @@ LOCAL void _loadstmt_splice_vector(s7_scheme *s7, struct node_s *pkg,
     s7_pointer iter = s7_make_iterator(s7, splice);
     s7_pointer new_loadstmt = s7_iterate(s7, iter);
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
-        log_debug("splicing item %d", i);
+        /* log_debug("splicing item %d", i); */
         if ( !s7_is_c_object(new_loadstmt)) {
             log_error("Loadstmt :splice only accepts :loadstmt nodes; got: %s of type %s",
                       s7_object_to_c_string(s7, new_loadstmt),
@@ -744,7 +741,7 @@ LOCAL void _loadstmt_attrs_splice_list(s7_scheme *s7,
     /* normalize index - cannot use util routine since there is no
        attrs node type */
     int attr_ct = sealark_loadstmt_binding_count(loadstmt);
-    log_debug("attr_ct: %d", attr_ct);
+    /* log_debug("attr_ct: %d", attr_ct); */
     /* reverse indexing */
     if (index < 0) {
         if (abs(index) > attr_ct) {
@@ -774,7 +771,7 @@ LOCAL void _loadstmt_attrs_splice_list(s7_scheme *s7,
     s7_pointer iter = s7_make_iterator(s7, splice);
     s7_pointer new_attr = s7_iterate(s7, iter);
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
-        log_debug("splicing item %d", i);
+        /* log_debug("splicing item %d", i); */
         if ( !s7_is_c_object(new_attr)) {
             log_error("Loadstmt :attr splicing only accepts binding nodes; got: %s of type %s",
                       s7_object_to_c_string(s7, new_attr),
@@ -824,7 +821,7 @@ LOCAL void _loadstmt_attrs_splice_vector(s7_scheme *s7,
     /* normalize index - cannot use util routine since there is no
        attrs node type */
     int attr_ct = sealark_loadstmt_binding_count(loadstmt);
-    log_debug("attr_ct: %d", attr_ct);
+    /* log_debug("attr_ct: %d", attr_ct); */
     /* reverse indexing */
     if (index < 0) {
         if (abs(index) > attr_ct) {
@@ -856,7 +853,7 @@ LOCAL void _loadstmt_attrs_splice_vector(s7_scheme *s7,
     s7_pointer iter = s7_make_iterator(s7, splice);
     s7_pointer new_attr = s7_iterate(s7, iter);
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
-        log_debug("splicing item %d", i);
+        /* log_debug("splicing item %d", i); */
         if ( !s7_is_c_object(new_attr)) {
             log_error("Loadstmt :attr splicing only accepts binding nodes; got: %s of type %s",
                       s7_object_to_c_string(s7, new_attr),
@@ -910,7 +907,7 @@ LOCAL void _loadstmt_binding_replace_k_or_v(s7_scheme *s7,
     s7_pointer indexer = s7_car(path);
     int idx = sunlark_kwindex_to_int(s7, indexer);
     if (errno == 0) { // int or kwint
-            log_debug("derefing binding by int");
+            /* log_debug("derefing binding by int"); */
             /* selector has already been vetted, must be :key or :value */
             if (selector == KW(key)) {
                 sealark_loadstmt_binding_for_int_replace_key(loadstmt,
@@ -923,7 +920,7 @@ LOCAL void _loadstmt_binding_replace_k_or_v(s7_scheme *s7,
             }
     } else {
         if (s7_is_symbol(indexer)) {
-            log_debug("derefing binding by keysym");
+            /* log_debug("derefing binding by keysym"); */
             if (selector == KW(key)) {
                 sealark_loadstmt_binding_for_sym_replace_key(loadstmt,
                                                     s7_symbol_name(indexer),

@@ -143,7 +143,7 @@ void test_set_string_raw_sq(void) {
                                    rsq3));
 
     s7_pointer newstr_str = s7_apply_function(s7, str, s7_eval_c_string(s7, "'(:$)"));
-    log_debug(":\n%s", s7_object_to_c_string(s7, newstr_str));
+
     TEST_ASSERT( !s7_is_c_object(newstr_str) );
     TEST_ASSERT( s7_is_string(newstr_str) );
     TEST_ASSERT_EQUAL_STRING( "r'''hello'''", s7_string(newstr_str) );

@@ -275,7 +275,7 @@ void test_pkg_path_0_sld_item(void)
     form = "'(:>)";
     path = s7_eval_c_string(s7, form);
     s7_pointer targets = s7_apply_function(s7, pkg, path);
-    log_debug("TARGETS: %s", s7_object_to_c_string(s7, targets));
+
     TEST_ASSERT( s7_is_symbol(targets) );
     TEST_ASSERT_EQUAL_STRING( "invalid_argument", s7_symbol_name(targets));
 }

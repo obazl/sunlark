@@ -146,7 +146,7 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
                     } else {
                     if (s7_is_string(selector)) {
                         const char *key = s7_string(selector);
-                        log_debug("loadstmt rm arg at %s", key);
+                        /* log_debug("loadstmt rm arg at %s", key); */
                         errno = 0;
                         sealark_loadstmt_rm_arg_at_str(loadstmt, key);
                         if (errno == 0)
@@ -171,12 +171,11 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
                     sealark_loadstmt_rm_args(loadstmt);
                 }
                 if (op2 == KW(binding) || op2 == KW(@)) {
-                    log_debug("accessing attr");
                     /* (:i :@) + selector */
                     /* selector must be int, kwint, or sym (binding key) */
                     idx = sunlark_kwindex_to_int(s7, selector);
                     if (errno == 0) { // int or kwint
-                        log_debug("removing attr at %d", idx);
+                        /* log_debug("removing attr at %d", idx); */
                         errno == 0;
                         sealark_loadstmt_rm_attr_at_int(loadstmt, idx);
                         if (errno == 0)
@@ -184,7 +183,7 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
                         else
                             return NULL;
                     } else {
-                        log_debug("indexing by %s", s7_object_to_c_string(s7, selector));
+                        /* log_debug("indexing by %s", s7_object_to_c_string(s7, selector)); */
                         if (s7_is_symbol(selector)) {
                             errno == 0;
                             sealark_loadstmt_rm_attr_at_sym(loadstmt,
@@ -220,7 +219,7 @@ s7_pointer sunlark_loadstmts_remove(s7_scheme *s7, struct node_s *pkg_node,
                     } else {
                         if (s7_is_string(selector)) {
                             const char *key = s7_string(selector);
-                            log_debug("loadstmt rm arg at %s", key);
+                            /* log_debug("loadstmt rm arg at %s", key); */
                             errno = 0;
                             sealark_loadstmt_rm_arg_at_str(loadstmt, key);
                             if (errno == 0)

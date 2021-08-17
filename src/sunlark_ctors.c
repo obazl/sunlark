@@ -45,8 +45,8 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
               s7_object_to_c_string(s7, s7_car(_args)));
 #endif
 
-    log_debug("sunlark-make-load args: %s",
-              s7_object_to_c_string(s7, _args));
+    /* log_debug("sunlark-make-load args: %s", */
+    /*           s7_object_to_c_string(s7, _args)); */
 
     if ( !s7_is_list(s7, _args) ) {
         log_error("bad make-load args: %s", s7_object_to_c_string(s7, _args));
@@ -57,7 +57,7 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
     }
 
     s7_pointer key = s7_car(_args);
-    log_debug("key: %s", s7_object_to_c_string(s7, key));
+    /* log_debug("key: %s", s7_object_to_c_string(s7, key)); */
     if ( !s7_is_string(key)) {
         log_error("Load :key must be a string; got %s %s",
                   s7_object_to_c_string(s7, s7_type_of(s7, key)),
@@ -68,7 +68,7 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
     int key_len = strlen(key_str);
 
     s7_pointer args = s7_cadr(_args);
-    log_debug("args: %s", s7_object_to_c_string(s7, args));
+    /* log_debug("args: %s", s7_object_to_c_string(s7, args)); */
     if ( !s7_is_list(s7, args) ) {
         log_error("Load :args must be a list of strings: %s",
                   s7_object_to_c_string(s7, args));
@@ -76,7 +76,7 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
     }
 
     s7_pointer attrs = s7_caddr(_args);
-    log_debug("attrs: %s", s7_object_to_c_string(s7, attrs));
+    /* log_debug("attrs: %s", s7_object_to_c_string(s7, attrs)); */
     if ( !s7_is_list(s7, attrs) ) {
         log_error("Load :attrs must be a list of bindings: %s",
                   s7_object_to_c_string(s7, attrs));
@@ -102,7 +102,7 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
     int i = 0;
     while ( !s7_is_null(s7, args) ) {
         arg = s7_car(args);
-        log_debug("arg: %s", s7_object_to_c_string(s7, arg));
+        /* log_debug("arg: %s", s7_object_to_c_string(s7, arg)); */
         node = sealark_new_s_node(TK_STRING, s7_string(arg));
         utarray_push_back(loadstmt->subnodes, node);
         if (i < args_ct) {
@@ -125,7 +125,7 @@ EXPORT s7_pointer sunlark_make_load(s7_scheme *s7, s7_pointer _args)
     struct node_s *binding;
     while ( !s7_is_null(s7, attrs) ) {
         attr = s7_car(attrs);
-        log_debug("attr: %s", s7_object_to_c_string(s7, attr));
+        /* log_debug("attr: %s", s7_object_to_c_string(s7, attr)); */
         assert( s7_is_c_object(attr) );
         if (! s7_is_c_object(attr) ) {
             return handle_errno(s7, EINVALID_LOAD_CTOR_ATTR, _args);
@@ -176,15 +176,15 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
               s7_object_to_c_string(s7, s7_car(args)));
 #endif
 
-    log_debug("sunlark-make-target args: %s",
-              s7_object_to_c_string(s7, args));
+    /* log_debug("sunlark-make-target args: %s", */
+    /*           s7_object_to_c_string(s7, args)); */
 
     s7_pointer rule = s7_car(args);
     /* log_debug("rule: %s", s7_object_to_c_string(s7, rule)); */
     s7_pointer name = s7_cadr(args);
     /* log_debug("name: %s", s7_object_to_c_string(s7, name)); */
     s7_pointer rest = s7_caddr(args);
-    log_debug("rest: %s", s7_object_to_c_string(s7, rest));
+    /* log_debug("rest: %s", s7_object_to_c_string(s7, rest)); */
     /* log_debug("rest c-obj?: %d", s7_is_c_object(rest)); */
 
     int line = 0;
@@ -242,7 +242,7 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
 
     /* log_debug("rest: %s", s7_object_to_c_string(s7, rest)); */
     int rest_len = s7_list_length(s7, rest) - 1;
-    log_debug("rest len: %d", rest_len+1);
+    /* log_debug("rest len: %d", rest_len+1); */
 
     struct node_s *comma;
     if (rest_len > 0) {
@@ -255,17 +255,13 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
     if (s7_is_c_object(rest)) {
         if (s7_c_object_type(rest) == ast_node_t) {
             if (sunlark_node_tid(s7,rest) == TK_Binding) {
-    log_debug("00 xxxxxxxxxxxxxxxx");
                 barg = s7_c_object_value(rest);
                 barg->line = ++line; barg->col = indent;
                 utarray_push_back(arg_list->subnodes, barg);
-    log_debug("0 xxxxxxxxxxxxxxxx");
                 if (rest_len > i) {
-    log_debug("1 xxxxxxxxxxxxxxxx");
                     comma = sealark_new_node(TK_COMMA, without_subnodes);
                     utarray_push_back(arg_list->subnodes, comma);
                 }
-    log_debug("2 xxxxxxxxxxxxxxxx");
             }
         }
     } else {
@@ -289,13 +285,11 @@ EXPORT s7_pointer sunlark_make_target(s7_scheme *s7, s7_pointer args)
                 }
                 i++;
                 rest = s7_cdr(rest);
-                log_debug("0 xxxxxxxxxxxxxxxx cdr rest: %s",
-                          s7_object_to_c_string(s7, rest));
+                /* log_debug("0 xxxxxxxxxxxxxxxx cdr rest: %s", */
+                /*           s7_object_to_c_string(s7, rest)); */
             }
         }
     }
-    log_debug("9 xxxxxxxxxxxxxxxx");
-
 
     node = sealark_new_node(TK_RPAREN, without_subnodes);
     node->line = ++line;

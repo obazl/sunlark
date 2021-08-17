@@ -106,7 +106,6 @@ s7_pointer sunlark_dict_expr_dispatcher(s7_scheme *s7,
 
         if (path_len == 3) {    /* e.g. ("akey" :value :0) */
             assert(val->tid = TK_List_Expr);
-            log_debug("0 xxxxxxxxxxxxxxxx");
             s7_pointer arg3 = s7_caddr(path_args);
             if (s7_is_string(arg3)) {
 
@@ -133,7 +132,7 @@ s7_pointer sunlark_dict_expr_dispatcher(s7_scheme *s7,
     /* not string, not int */
     int i = sunlark_kwindex_to_int(s7, idx);
     if (errno == 0) {// we got an int
-        log_debug("indexing at %d", i);
+        /* log_debug("indexing at %d", i); */
         errno = 0;
         struct node_s *dict_entry
             = sealark_dict_entry_for_int(dict, i);
@@ -161,8 +160,6 @@ s7_pointer sunlark_dict_expr_dispatcher(s7_scheme *s7,
         } else {
             s7_pointer result
                 = sunlark_common_property_lookup(s7, dict, idx);
-            log_debug("0 xxxxxxxxxxxxxxxx %s", s7_object_to_c_string(s7, result));
-
             if (result) {
                 errno = 0;
                 return result;

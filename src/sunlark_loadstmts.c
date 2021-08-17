@@ -93,7 +93,7 @@ LOCAL s7_pointer _loadstmt_dispatch(s7_scheme *s7,
             if (bindings) {
                 return nodelist_to_s7_list(s7, bindings);
             } else {
-                log_debug("no bindings found");
+                log_error("no bindings found");
                 errno = ENOT_FOUND;
                 return NULL;
             }
@@ -187,7 +187,7 @@ s7_pointer sunlark_loadstmt_arg_dispatcher(s7_scheme *s7,
                         = sunlark_common_property_lookup(s7, arg, sel);
                     return result;
                 } else {
-                    log_debug("Invalid arg: %s",
+                    log_error("Invalid arg: %s",
                               s7_object_to_c_string(s7, sel));
                     errno = EINVALID_ARG;
                     return NULL;
@@ -219,7 +219,7 @@ s7_pointer sunlark_loadstmt_arg_dispatcher(s7_scheme *s7,
                         = sunlark_common_property_lookup(s7, arg, sel);
                     return result;
                 } else {
-                    log_debug("Invalid arg: %s",
+                    log_error("Invalid arg: %s",
                               s7_object_to_c_string(s7, sel));
                     errno = EINVALID_ARG;
                     return NULL;
@@ -296,7 +296,7 @@ LOCAL s7_pointer _loadstmt_binding_dispatcher(s7_scheme *s7,
                             = sunlark_common_property_lookup(s7, binding, sel);
                         return result;
                     }
-                    log_debug("Invalid arg: %s",
+                    log_error("Invalid arg: %s",
                               s7_object_to_c_string(s7, sel));
                     errno = EINVALID_ARG;
                     return NULL;
@@ -323,21 +323,21 @@ LOCAL s7_pointer _loadstmt_binding_dispatcher(s7_scheme *s7,
                 } else {
                     s7_pointer sel = s7_cadr(path_args);
                     if (sel == KW(key)) {
-                        log_debug("projecting key");
+                        /* log_debug("projecting key"); */
                         /* struct node_s *k */
                         s7_pointer k
                             = sunlark_binding_dispatcher(s7, binding, sel);
                         return k;
                     }
                     if (sel == KW(value)) {
-                        log_debug("project value");
+                        log_error("FIXME: NOT IMPLEMENTED YET");
                     }
                     if (s7_is_keyword(sel)) {
                         s7_pointer result
                             = sunlark_common_property_lookup(s7, binding, sel);
                         return result;
                     } else {
-                        log_debug("Invalid arg: %s",
+                        log_error("Invalid arg: %s",
                                   s7_object_to_c_string(s7, sel));
                         errno = EINVALID_ARG;
                         return NULL;
@@ -378,7 +378,7 @@ s7_pointer sunlark_pkg_loadstmt_dispatch(s7_scheme *s7,
     assert(pkg->tid == TK_Package);
 
     s7_pointer op = s7_car(path_args);
-    log_debug("op: %s", s7_object_to_c_string(s7, op));
+    /* log_debug("op: %s", s7_object_to_c_string(s7, op)); */
     /* **************** */
     /* string == key */
     if (s7_is_string(op)) {

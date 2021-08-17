@@ -30,7 +30,6 @@ EXPORT void sunlark_debug_print_node(s7_scheme *s7,
 
     if (utstring_body(buf)[utstring_len(buf)-1] == '\n')
         utstring_body(buf)[utstring_len(buf)-1] = '\0';
-    log_debug("%s", utstring_body(buf));
     utstring_free(buf);
 }
 

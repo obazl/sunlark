@@ -80,7 +80,7 @@ void validate_hello_world_target(s7_pointer target) {
 
     s7_pointer rule_sym = s7_apply_function(s7, rule,
                                             s7_eval_c_string(s7, "'(:$)"));
-    log_debug("rule_sym: %s", s7_object_to_c_string(s7, rule_sym));
+
     TEST_ASSERT( !s7_is_c_object(rule_sym) );
     TEST_ASSERT( s7_is_symbol(rule_sym) );
     TEST_ASSERT_EQUAL_STRING( "cc_library", s7_symbol_name(rule_sym) );
@@ -95,7 +95,7 @@ void validate_hello_world_target(s7_pointer target) {
 
     /* check target name == "hello-lib" */
     s7_pointer name = s7_apply_function(s7, target, s7_eval_c_string(s7, "'(:name)"));
-    log_debug("name: %s", s7_object_to_c_string(s7, name));
+
     TEST_ASSERT( s7_is_c_object(name) );
     TEST_ASSERT( sunlark_node_tid(s7, name) == TK_STRING );
 

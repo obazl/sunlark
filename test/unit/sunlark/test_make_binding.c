@@ -585,7 +585,7 @@ void _validate_mixed_list(s7_pointer binding)
     s7_pointer pred;
     s7_pointer iter = s7_make_iterator(s7, val);
     s7_pointer item = s7_iterate(s7, iter);
-    log_debug("item xxxx: %s", s7_object_to_c_string(s7, item));
+
     int i = 0;
     while ( ! s7_iterator_is_at_end(s7, iter) ) {
         TEST_ASSERT( s7_is_c_object(item) );

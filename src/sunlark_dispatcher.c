@@ -36,7 +36,7 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
     int data_tid;
     if (s7_is_list(s7, data)) {
         // return sunlark_dispatch_on_list ??
-        log_warn("dispatching on s7 list");
+        log_error("FIXME dispatching on s7 list");
         exit(EXIT_FAILURE);     /* FIXME */
     }
 
@@ -99,11 +99,13 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
 #if defined(DEBUG_TRACE)
         log_debug("dispatching on TK_Load_Stmt");
 #endif
-        s7_pointer result = sunlark_loadstmt_dispatch(s7, data, path_args);
-        if (last == s7_make_keyword(s7, "$")) {
-            return node_to_scheme(s7, s7_c_object_value(result));
-        } else {
-            return result;
+        {
+            s7_pointer result = sunlark_loadstmt_dispatch(s7, data, path_args);
+            if (last == s7_make_keyword(s7, "$")) {
+                return node_to_scheme(s7, s7_c_object_value(result));
+            } else {
+                return result;
+            }
         }
         break;
 
@@ -129,7 +131,6 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
                         return r;
                     else {
                         if (errno == EUNKNOWN_KW) {
-                            log_debug("unknown kw");
                             return sunlark_common_property_lookup(s7,
                                                                   s7_c_object_value(data), op);
                         } else {
@@ -139,7 +140,7 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
                     }
                 }
                 /* FIXME: type of result? */
-                log_error("wtf ????????????????");
+                log_error("FIXME");
                 return sunlark_new_node(s7, resnode);
             }
             /* if (r) */
@@ -178,7 +179,7 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
                 return res; //sunlark_new_node(s7, res);
             else
                 if (errno == EUNKNOWN_KW) {
-                    log_debug("unknown kw");
+                    /* log_debug("unknown kw"); */
                     return sunlark_common_property_lookup(s7,
                                           s7_c_object_value(data), op);
                 } else {
@@ -187,7 +188,7 @@ s7_pointer sunlark_dispatch(s7_scheme *s7,
                 }
         }
         /* FIXME: type of result? */
-        log_error("wtf ????????????????");
+        log_error("FIXEME ...");
         return sunlark_new_node(s7, resnode);
     }
         break;
@@ -328,8 +329,8 @@ LOCAL s7_pointer _dispatch_on_string(s7_scheme *s7,
     } else {
         if (kw == KW(qqq)) {
             struct node_s *s = s7_c_object_value(node);
-            log_debug("qtype: %#04x", s->qtype);
-            log_debug("TRIPLE: %#04x", TRIPLE);
+            /* log_debug("qtype: %#04x", s->qtype); */
+            /* log_debug("TRIPLE: %#04x", TRIPLE); */
             if (s->qtype & TRIPLE)
                 return s7_t(s7);
             else
@@ -337,7 +338,7 @@ LOCAL s7_pointer _dispatch_on_string(s7_scheme *s7,
         } else {
             if (kw == KW(t)) {
                 struct node_s *s = s7_c_object_value(node);
-                log_debug("qtype: %#4x", s->qtype);
+                /* log_debug("qtype: %#4x", s->qtype); */
                 if (s->qtype & (BINARY_STR & RAW_STR))
                     return s7_make_keyword(s7, "br");
                 else
@@ -394,7 +395,7 @@ LOCAL s7_pointer _dispatch_on_id(s7_scheme *s7,
 #endif
 
     int op_count = s7_list_length(s7, path_args);
-    log_debug("op count: %d", op_count);
+    /* log_debug("op count: %d", op_count); */
 
     if (op_count > 1) {
         //error, :s, :tid etc. allowed
@@ -422,12 +423,11 @@ LOCAL s7_pointer sunlark_dispatch_on_any(s7_scheme *s7,
 #if defined (DEBUG_TRACE) || defined(DEBUG_PROPERTIES)
     log_debug("sunlark_dispatch_on_any: %s",
               s7_object_to_c_string(s7, path_args));
-#endif
-
     log_debug("path args is list? %d", s7_is_list(s7, path_args));
     log_debug("path args is kw? %d", s7_is_keyword(path_args));
     log_debug("path args is sym? %d", s7_is_symbol(path_args));
     log_debug("path args is string? %d", s7_is_string(path_args));
+#endif
 
     //FIXME: constraints on path_args
 

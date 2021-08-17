@@ -285,7 +285,7 @@ s7_pointer sunlark_node_length(s7_scheme *s7, s7_pointer _node)
 #endif
 
     struct node_s *node = s7_c_object_value(s7_car(_node));
-    log_debug("tid: %d %s", node->tid, TIDNAME(node));
+    /* log_debug("tid: %d %s", node->tid, TIDNAME(node)); */
 
     int ct;
     if (node->tid == TK_Arg_List) {

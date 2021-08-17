@@ -102,7 +102,6 @@ void test_rm_all_loadstmts(void)
     TEST_ASSERT( !s7_is_c_object(loadstmts) );
     TEST_ASSERT( s7_is_list(s7, loadstmts) );
     TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
-            log_debug("0 xxxxxxxxxxxxxxxx");
 
     char *getter_s = "'(pkg :loadstmts)";
     s7_pointer getter = s7_eval_c_string(s7, getter_s);
