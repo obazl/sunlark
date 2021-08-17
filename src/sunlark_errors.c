@@ -196,6 +196,13 @@ s7_pointer handle_errno(s7_scheme *s7, int errorno, s7_pointer path_args)
                "Binding :splice only accepts :binding nodes; got ~A"),
                                 path_args)));
         break;
+    case EINVALID_SET_ATTR_NEWVAL:
+        return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
+                        s7_list(s7, 3, s7_make_string(s7,
+                        "Val for set! attr must be of type :binding, got: ~A of type ~A"),
+                      path_args,
+                      s7_type_of(s7,path_args))));
+        break;
     default:
         return(s7_error(s7, s7_make_symbol(s7, "invalid_argument"),
                         s7_list(s7, 2, s7_make_string(s7,

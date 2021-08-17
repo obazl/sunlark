@@ -17,7 +17,9 @@ s7_pointer pkg;
 s7_pointer path;
 s7_pointer target;
 s7_pointer bindings, binding;
-s7_pointer key, keystr, keysym;
+s7_pointer key;
+s7_pointer keystr;
+s7_pointer keysym;
 s7_pointer val;
 s7_pointer pred;
 s7_pointer list;
@@ -29,6 +31,7 @@ s7_pointer count;
 s7_pointer args;
 s7_pointer arg;
 s7_pointer attrs;
+s7_pointer attr;
 
 s7_pointer getter;
 

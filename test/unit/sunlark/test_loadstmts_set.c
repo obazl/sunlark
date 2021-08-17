@@ -22,47 +22,46 @@ LOCAL enum splice_type {LIST, VECTOR};
 int main(void) {
     UNITY_BEGIN();
 
-    /* /\* replacing loadstmts *\/ */
-    /* // (set! (pkg :load <ref>) newload) */
-    /* RUN_TEST(test_replace_first_loadstmt_by_int);   //ref  -1 */
-    /* RUN_TEST(test_replace_first_loadstmt_by_kwint); //ref :-1 */
-    /* RUN_TEST(test_replace_first_loadstmt_by_str); //"@rules_cc//cc:defs.bzl" */
+    /* replacing loadstmts */
+    // (set! (pkg :load <ref>) newload)
+    RUN_TEST(test_replace_first_loadstmt_by_int);   //ref  -1
+    RUN_TEST(test_replace_first_loadstmt_by_kwint); //ref :-1
+    RUN_TEST(test_replace_first_loadstmt_by_str); //"@rules_cc//cc:defs.bzl"
 
-    /* RUN_TEST(test_replace_loadstmt_by_int);   //ref  2 */
-    /* RUN_TEST(test_replace_loadstmt_by_kwint); //ref :2 */
-    /* RUN_TEST(test_replace_loadstmt_by_str); //ref "@repoc//pkgc:targetc.bzl" */
+    RUN_TEST(test_replace_loadstmt_by_int);   //ref  2
+    RUN_TEST(test_replace_loadstmt_by_kwint); //ref :2
+    RUN_TEST(test_replace_loadstmt_by_str); //ref "@repoc//pkgc:targetc.bzl"
 
-    /* RUN_TEST(test_replace_last_loadstmt_by_int);   //ref  -1 */
-    /* RUN_TEST(test_replace_last_loadstmt_by_kwint); //ref :-1 */
-    /* RUN_TEST(test_replace_last_loadstmt_by_str); //"@rules_cc//cc:defs.bzl" */
+    RUN_TEST(test_replace_last_loadstmt_by_int);   //ref  -1
+    RUN_TEST(test_replace_last_loadstmt_by_kwint); //ref :-1
+    RUN_TEST(test_replace_last_loadstmt_by_str); //"@rules_cc//cc:defs.bzl"
 
-    /* /\* splicing loadsmts *\/ */
-    /* RUN_TEST(test_splice_loadstmt_before_first_by_int);   //ref  0 */
-    /* RUN_TEST(test_splice_loadstmt_before_first_by_kwint); //ref  :0 */
-    /* RUN_TEST(test_splice_loadstmt_before_first_by_str); // "@repoa//pkga:targeta.bzl" */
+    /* splicing loadsmts */
+    RUN_TEST(test_splice_loadstmt_before_first_by_int);   //ref  0
+    RUN_TEST(test_splice_loadstmt_before_first_by_kwint); //ref  :0
+    RUN_TEST(test_splice_loadstmt_before_first_by_str); // "@repoa//pkga:targeta.bzl"
 
-    /* RUN_TEST(test_splice_loadstmt_after_last_by_int);   //ref  -1 */
-    /* RUN_TEST(test_splice_loadstmt_after_last_by_kwint);   //ref  :-1 */
-    /* RUN_TEST(test_splice_loadstmt_after_last_by_str);   //"@rules_cc//cc:defs.bzl" */
+    RUN_TEST(test_splice_loadstmt_after_last_by_int);   //ref  -1
+    RUN_TEST(test_splice_loadstmt_after_last_by_kwint);   //ref  :-1
+    RUN_TEST(test_splice_loadstmt_after_last_by_str);   //"@rules_cc//cc:defs.bzl"
 
     /* replace args */
-    /* RUN_TEST(test_loadstmt_replace_first_arg_by_int);   //ref 0 */
-    /* RUN_TEST(test_loadstmt_replace_first_arg_by_kwint); //ref :0 */
-    /* RUN_TEST(test_loadstmt_replace_first_arg_by_str);   //ref "arg0c" */
+    RUN_TEST(test_loadstmt_replace_first_arg_by_int);   //ref 0
+    RUN_TEST(test_loadstmt_replace_first_arg_by_kwint); //ref :0
+    RUN_TEST(test_loadstmt_replace_first_arg_by_str);   //ref "arg0c"
 
-    /* RUN_TEST(test_loadstmt_replace_last_arg_by_int);   //ref 0 */
-    /* RUN_TEST(test_loadstmt_replace_last_arg_by_kwint); //ref :0 */
-    /* RUN_TEST(test_loadstmt_replace_last_arg_by_str);   //ref "arg0c" */
+    RUN_TEST(test_loadstmt_replace_last_arg_by_int);   //ref 0
+    RUN_TEST(test_loadstmt_replace_last_arg_by_kwint); //ref :0
+    RUN_TEST(test_loadstmt_replace_last_arg_by_str);   //ref "arg2c"
 
     /* splice args */
-    RUN_TEST(test_splice_args_before_first_by_int);   //ref  0
-    /* RUN_TEST(test_splice_loadstmt_before_first_by_kwint); //ref  :0 */
-    /* RUN_TEST(test_splice_loadstmt_before_first_by_str); // "@repoa//pkga:targeta.bzl" */
+    RUN_TEST(test_splice_args_before_first_by_int);
+    RUN_TEST(test_splice_args_before_first_by_kwint);
+    RUN_TEST(test_splice_args_before_first_by_str);
 
-    /* RUN_TEST(test_splice_loadstmt_after_last_by_int);   //ref  -1 */
-    /* RUN_TEST(test_splice_loadstmt_after_last_by_kwint);   //ref  :-1 */
-    /* RUN_TEST(test_splice_loadstmt_after_last_by_str);   //"@rules_cc//cc:defs.bzl" */
-
+    RUN_TEST(test_splice_args_after_last_by_int);
+    RUN_TEST(test_splice_args_after_last_by_kwint);
+    RUN_TEST(test_splice_args_after_last_by_str);
 
     return UNITY_END();
 }
@@ -879,7 +878,7 @@ LOCAL void _splice_args_before_first_postcheck(void)
     TEST_ASSERT( s7_is_list(s7, loadstmts) );
     TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
 
-    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-3)");
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :0)");
     struct node_s *arg_nd = s7_c_object_value(arg);
     TEST_ASSERT( arg_nd->tid == TK_STRING);
     s7_pointer k = s7_apply_function(s7, arg,
@@ -888,7 +887,7 @@ LOCAL void _splice_args_before_first_postcheck(void)
     TEST_ASSERT_EQUAL_STRING( "\"hello\"",
                               s7_string(k) );
 
-    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-2)");
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :1)");
     arg_nd = s7_c_object_value(arg);
     TEST_ASSERT( arg_nd->tid == TK_STRING);
     k = s7_apply_function(s7, arg,
@@ -897,13 +896,13 @@ LOCAL void _splice_args_before_first_postcheck(void)
     TEST_ASSERT_EQUAL_STRING( "\"goodbye\"",
                               s7_string(k) );
 
-    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-1)");
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :2)");
     arg_nd = s7_c_object_value(arg);
     TEST_ASSERT( arg_nd->tid == TK_STRING);
     k = s7_apply_function(s7, arg,
                                       s7_list(s7, 1,
                                               s7_make_keyword(s7, "$")));
-    TEST_ASSERT_EQUAL_STRING( "\"arg2c\"",
+    TEST_ASSERT_EQUAL_STRING( "\"arg0c\"",
                               s7_string(k) );
 }
 
@@ -914,7 +913,7 @@ void test_splice_args_before_first_by_int(void)
     _splice_args_before_first_precheck();
 
     /* make change */
-    char *getter_s = "'(pkg :load :2 :arg -1)";
+    char *getter_s = "'(pkg :load :2 :arg 0)";
     s7_pointer getter = s7_eval_c_string(s7, getter_s);
     s7_pointer splice = s7_list(s7, 3,
                                 s7_make_symbol(s7, "list"),
@@ -934,10 +933,13 @@ void test_splice_args_before_first_by_kwint(void)
     _splice_args_before_first_precheck();
 
     /* make change */
-    char *getter_s = "'(pkg :load :2 :arg :-1)";
+    char *getter_s = "'(pkg :load :2 :arg :0)";
     s7_pointer getter = s7_eval_c_string(s7, getter_s);
-    s7_pointer x = s7_list(s7, 2, getter,
-                           s7_make_string(s7, "hello"));
+    s7_pointer splice = s7_list(s7, 3,
+                                s7_make_symbol(s7, "list"),
+                                s7_make_string(s7, "hello"),
+                                s7_make_string(s7, "goodbye"));
+    s7_pointer x = s7_list(s7, 2, getter, splice);
     s7_apply_function(s7, set_bang, x);
 
     struct node_s *p = s7_c_object_value(pkg);
@@ -951,14 +953,119 @@ void test_splice_args_before_first_by_str(void)
     _splice_args_before_first_precheck();
 
     /* make change */
-    char *getter_s = "'(pkg :load :2 :arg \"arg2c\")";
+    char *getter_s = "'(pkg :load :2 :arg \"arg0c\")";
     s7_pointer getter = s7_eval_c_string(s7, getter_s);
-    s7_pointer x = s7_list(s7, 2, getter,
-                           s7_make_string(s7, "hello"));
+   s7_pointer splice = s7_list(s7, 3,
+                                s7_make_symbol(s7, "list"),
+                                s7_make_string(s7, "hello"),
+                                s7_make_string(s7, "goodbye"));
+    s7_pointer x = s7_list(s7, 2, getter, splice);
     s7_apply_function(s7, set_bang, x);
 
     struct node_s *p = s7_c_object_value(pkg);
     _splice_args_before_first_postcheck();
+    sunlark_dispose(s7,pkg);
+}
+
+/* **************************************************************** */
+/* **************************************************************** */
+LOCAL void _splice_args_after_last_precheck(void)
+{
+    path = s7_eval_c_string(s7, "'(:loadstmts)");
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    s7_pointer arg_ct = s7_eval_c_string(s7, "(pkg :load :2 :args)");
+    TEST_ASSERT_EQUAL_INT( 3, s7_list_length(s7, arg_ct) );
+
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-1)");
+    s7_pointer k;
+    k = s7_apply_function(s7, arg, s7_list(s7, 1, s7_make_keyword(s7, "$")));
+    TEST_ASSERT_EQUAL_STRING( "\"arg2c\"", s7_string(k) );
+}
+
+LOCAL void _splice_args_after_last_postcheck(void)
+{
+    path = s7_eval_c_string(s7, "'(:loadstmts)");
+    loadstmts = s7_apply_function(s7, pkg, path);
+    TEST_ASSERT( s7_is_list(s7, loadstmts) );
+    TEST_ASSERT_EQUAL_INT( 4, s7_list_length(s7, loadstmts) );
+
+    s7_pointer arg_ct = s7_eval_c_string(s7, "(pkg :load :2 :args)");
+    TEST_ASSERT_EQUAL_INT( 5, s7_list_length(s7, arg_ct) );
+
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-3)");
+    s7_pointer k;
+    k = s7_apply_function(s7, arg, s7_list(s7, 1, s7_make_keyword(s7, "$")));
+    TEST_ASSERT_EQUAL_STRING( "\"arg2c\"", s7_string(k) );
+
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-2)");
+    k = s7_apply_function(s7, arg, s7_list(s7, 1, s7_make_keyword(s7, "$")));
+    TEST_ASSERT_EQUAL_STRING( "\"hello\"", s7_string(k) );
+
+    arg = s7_eval_c_string(s7, "(pkg :load :2 :arg :-1)");
+    k = s7_apply_function(s7, arg, s7_list(s7, 1, s7_make_keyword(s7, "$")));
+    TEST_ASSERT_EQUAL_STRING( "\"goodbye\"", s7_string(k) );
+}
+
+s7_pointer _make_splice_vector(void)
+{
+    s7_pointer splice = s7_make_vector(s7, 2);
+    s7_vector_set(s7, splice, 0, s7_make_string(s7, "hello"));
+    s7_vector_set(s7, splice, 1, s7_make_string(s7, "goodbye"));
+    return splice;
+}
+
+/* **************************************************************** */
+void test_splice_args_after_last_by_int(void)
+{
+    _parse_pkg();
+    _splice_args_after_last_precheck();
+
+    /* make change */
+    char *getter_s = "'(pkg :load :2 :arg -1)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer splice = _make_splice_vector();
+    s7_pointer x = s7_list(s7, 2, getter, splice);
+    s7_apply_function(s7, set_bang, x);
+
+    /* struct node_s *p = s7_c_object_value(pkg); */
+    _splice_args_after_last_postcheck();
+    sunlark_dispose(s7,pkg);
+}
+
+void test_splice_args_after_last_by_kwint(void)
+{
+    _parse_pkg();
+    _splice_args_after_last_precheck();
+
+    /* make change */
+    char *getter_s = "'(pkg :load :2 :arg :-1)";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer splice = _make_splice_vector();
+    s7_pointer x = s7_list(s7, 2, getter, splice);
+    s7_apply_function(s7, set_bang, x);
+
+    struct node_s *p = s7_c_object_value(pkg);
+    _splice_args_after_last_postcheck();
+    sunlark_dispose(s7,pkg);
+}
+
+void test_splice_args_after_last_by_str(void)
+{
+    _parse_pkg();
+    _splice_args_after_last_precheck();
+
+    /* make change */
+    char *getter_s = "'(pkg :load :2 :arg \"arg2c\")";
+    s7_pointer getter = s7_eval_c_string(s7, getter_s);
+    s7_pointer splice = _make_splice_vector();
+    s7_pointer x = s7_list(s7, 2, getter, splice);
+    s7_apply_function(s7, set_bang, x);
+
+    struct node_s *p = s7_c_object_value(pkg);
+    _splice_args_after_last_postcheck();
     sunlark_dispose(s7,pkg);
 }
 

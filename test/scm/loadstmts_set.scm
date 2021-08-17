@@ -67,6 +67,7 @@
          ;; (b2 (make-binding 'key2 "goodbye"))
          ;; (v (pkg :load :2 :arg 2))
          ;; (v (v :$))
+         ;; (v (pkg :load :2 :@ 0 :key))
          )
     ;; (set! (pkg :load :0 :arg 0) "hello") ;; replace
     ;; (set! (pkg :load :0 :arg :0) "hello") ;; replace
@@ -84,10 +85,56 @@
     ;; splicing
     ;; (set! (pkg :load :2 :arg :0) (list "hi" "howdy")) ;; splice at
     ;; (set! (pkg :load :2 :arg :-1) (list "hi" "howdy")) ;; splice at
+    ;; (set! (pkg :load :2 :arg "arg0c") (list "hi" "howdy"))
 
     ;; (set! (pkg :load :0 :arg :0) (vector "hi" "howdy")) ;; splice after
     ;; (set! (pkg :load :0 :arg :-1) (vector "hi" "howdy")) ;; splice after
-    (set! (pkg :load :1 :arg :-1) (vector "hi" "howdy")) ;; splice after
+    ;; (set! (pkg :load :1 :arg :-1) (vector "hi" "howdy")) ;; splice after
+    ;; (set! (pkg :load :2 :arg "arg2c") (vector "hi" "howdy")) ;; splice after
+
+    ;; replace attrs
+    ;; (set! (pkg :load :2 :@ :0) "hello") ;; type error
+    ;; (set! (pkg :load :2 :@ -1) (make-binding 'newkey "hello"))
+    ;; (set! (pkg :load :2 :@ 0) (make-binding 'newkey "hello"))
+    ;; (set! (pkg :load :2 :@ 'key0c) (make-binding 'newkey "hello"))
+    ;; (set! (pkg :load :2 :@ 'key0c) (make-binding 'newkey "hello"))
+
+    ;; splice (insert) new attrs
+    ;; splice before first
+    ;; (set! (pkg :load :2 :@ 0) ;; by int
+    ;;       (list (make-binding 'newkey0 "newval0")
+    ;;             (make-binding 'newkey1 "newval1")))
+    ;; (set! (pkg :load :2 :@ :0) ;; by kwint
+    ;;       (list (make-binding 'newkey0 "newval0")
+    ;;             (make-binding 'newkey1 "newval1")))
+    ;; (set! (pkg :load :2 :@ 'key0c) ;; by sym key
+    ;;       (list (make-binding 'newkey0 "newval0")
+    ;;             (make-binding 'newkey1 "newval1")))
+
+    ;; splice before last
+    ;; (set! (pkg :load :2 :@ -1) ;; by int
+    ;;       (list (make-binding 'newkey0 "newval0")
+    ;;             (make-binding 'newkey1 "newval1")))
+    ;; (set! (pkg :load :2 :@ :-1) ; by kwint
+    ;;       (list (make-binding 'newkey0 "newval0")
+    ;;             (make-binding 'newkey1 "newval1")))
+    ;; (set! (pkg :load :2 :@ 'lastkey2c) ;; by key sym
+    ;;       (list (make-binding 'newkey0 "newval0")
+    ;;             (make-binding 'newkey1 "newval1")))
+
+    ;; splice after last
+    ;; (set! (pkg :load :2 :@ -1) ;; by int
+    ;;       (vector (make-binding 'newkey0 "newval0")
+    ;;               (make-binding 'newkey1 "newval1")))
+    ;; (set! (pkg :load :2 :@ 'lastkey2c) ;; by key sym
+    ;;       (vector (make-binding 'newkey0 "newval0")
+    ;;               (make-binding 'newkey1 "newval1")))
+
+    ;; set attr keys and vals
+    ;; (set! (pkg :load :2 :@ 'lastkey2c :key) "newkey")
+
+    (set! (pkg :load :2 :@ 'key0c :value) "newval")
+
 
     (pkg :format)
     ;; (display v) (newline)

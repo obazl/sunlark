@@ -8,9 +8,20 @@
          ;; data: test/buildfiles/BUILD.loadstmts
 
           ;; (v (pkg :loadstmts))
-         (v (pkg :load 2))
-         (v (v :args))
-         (v (length v))
+         ;; (v (pkg :load 2))
+         ;; (v (v :args))
+         ;; (v (length v))
+
+         ;; (v (pkg :load :2 :@@)) ;; :0))
+
+         ;;(v (pkg :load :2 :@ :0))
+         ;;(v (pkg :load :2 :@ :0 :key))
+         ;; (v (pkg :load :2 :@ :0 :value))
+         ;;(v (pkg :load :2 :@ :-1))
+         ;;(v (pkg :load :2 :@ :-1 :key))
+         ;; (v (pkg :load :2 :@ :-1 :value))
+
+         ;; (v (v :key))
 
           ;; (v (pkg :load "@repoa//pkga:targeta.bzl"))
           ;; (v (pkg :load "@repoc//pkgc:targetc.bzl"))

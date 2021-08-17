@@ -262,9 +262,11 @@ LOCAL s7_pointer _loadstmt_binding_dispatcher(s7_scheme *s7,
     s7_pointer op = s7_car(path_args);
 
     /* **************** */
-    if (s7_is_integer(op)) {
+    int idx = sunlark_kwindex_to_int(s7, op);
+    if (errno == 0) { // int or kwint
+    /* if (s7_is_integer(op)) { */
         struct node_s *binding
-            = sealark_loadstmt_binding_for_int(loadstmt, s7_integer(op));
+            = sealark_loadstmt_binding_for_int(loadstmt, idx);
         if (binding) {
             if (s7_is_null(s7, s7_cdr(path_args))) {
                 return sunlark_new_node(s7, binding);
@@ -277,7 +279,6 @@ LOCAL s7_pointer _loadstmt_binding_dispatcher(s7_scheme *s7,
                 } else {
                     s7_pointer sel = s7_cadr(path_args);
                     if (sel == KW(key)) {
-                        log_debug("project key");
                         /* struct node_s *k */
                         s7_pointer k
                             = sunlark_binding_dispatcher(s7, binding,
@@ -285,7 +286,10 @@ LOCAL s7_pointer _loadstmt_binding_dispatcher(s7_scheme *s7,
                         return k; //sunlark_new_node(s7, k);
                     }
                     if (sel == KW(value)) {
-                        log_debug("project value");
+                        s7_pointer k
+                            = sunlark_binding_dispatcher(s7, binding,
+                                                         s7_cdr(path_args));
+                        return k; //sunlark_new_node(s7, k);
                     }
                     if (s7_is_keyword(sel)) {
                         s7_pointer result
