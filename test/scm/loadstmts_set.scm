@@ -131,10 +131,23 @@
     ;;               (make-binding 'newkey1 "newval1")))
 
     ;; set attr keys and vals
+    ;; (set! (pkg :load :2 :@ 0 :key) "newkey")
+    ;; (set! (pkg :load :2 :@ 0 :value) "newval")
+
+    ;; (set! (pkg :load :2 :@ :0 :key) "newkey")
+    ;; (set! (pkg :load :2 :@ :0 :value) "newval")
+
+    ;; (set! (pkg :load :2 :@ 'key0c :key) "newkey")
+    ;; (set! (pkg :load :2 :@ 'key0c :value) "newval")
+
+    ;; (set! (pkg :load :2 :@ -1 :key) "newkey")
+    ;; (set! (pkg :load :2 :@ -1 :value) "newval")
+
+    ;; (set! (pkg :load :2 :@ :-1 :key) "newkey")
+    ;; (set! (pkg :load :2 :@ :-1 :value) "newval")
+
     ;; (set! (pkg :load :2 :@ 'lastkey2c :key) "newkey")
-
-    (set! (pkg :load :2 :@ 'key0c :value) "newval")
-
+    ;; (set! (pkg :load :2 :@ 'lastkey2c :value) "newval")
 
     (pkg :format)
     ;; (display v) (newline)
