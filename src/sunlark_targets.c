@@ -202,17 +202,10 @@ LOCAL s7_pointer _target_binding_dispatcher(s7_scheme *s7,
                 /* } */
             }
         } else {
-            return handle_errno(s7, errno, path_args);
-           /* if (errno = -1) { */
-           /*      log_error("Binding not found for key: %s", s7_symbol_name(op)); */
-           /*      return(s7_error(s7, */
-           /*                      s7_make_symbol(s7, "not_found"), */
-           /*                      s7_list(s7, 2, s7_make_string(s7, */
-           /*                      "Binding not found for key: ~A"), op))); */
-           /*  } else { */
-           /*      log_error("wtf 2 ????????????????"); */
-           /*      return NULL; */
-           /*  } */
+            if (errno == ENOT_FOUND_BINDING)
+                return s7_nil(s7);
+            else
+                return handle_errno(s7, errno, path_args);
         }
     }
 

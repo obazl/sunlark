@@ -326,7 +326,8 @@ LOCAL s7_pointer _pkg_target_dispatcher(s7_scheme *s7,
         /* log_debug("TARGET"); */
         /* UT_array *targets = sealark_targets_for_pkg(pkg); */
         /* return nodelist_to_s7_list(s7, targets); */
-        return handle_errno(s7, EINVALID_ARG, path_args);
+        /* return handle_errno(s7, EINVALID_ARG, path_args); */
+        return sunlark_new_node(s7, pkg);
     }
 
     if (s7_is_string(op)) {     /* :> "hello-world") */

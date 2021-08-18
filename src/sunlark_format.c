@@ -27,7 +27,6 @@ s7_pointer sunlark_remove_trailing_commas(s7_scheme *s7, s7_pointer args)
     }
 
     struct node_s *node = s7_c_object_value(s7_car(args));
-    log_debug("0 xxxxxxxxxxxxxxxx");
 
     sealark_remove_trailing_commas(node);
     return s7_unspecified(s7);

@@ -30,6 +30,7 @@ struct node_s *sunlark_target_mutate(s7_scheme *s7,
         struct node_s *call_sfx = utarray_eltptr(target->subnodes, 1);
         struct node_s *arglist = utarray_eltptr(call_sfx->subnodes, 1);
         struct node_s *r
+            //FIXME: ???? why rm_all?
             = sealark_target_bindings_rm_all(arglist);
         if (r)
             return r;
@@ -37,8 +38,17 @@ struct node_s *sunlark_target_mutate(s7_scheme *s7,
             return NULL;
     }
     if (lval == KW(rule)) {
-        log_error("mutate :rule, under construction ...");
-        errno = ENOT_IMPLEMENTED;
-        return NULL;
+        if ( !s7_is_symbol(update_val) ) {
+            log_error("Update value for :rule must be symbol");
+            errno = EINVALID_UPDATE;
+            return NULL;
+        }
+        struct node_s *rule = utarray_eltptr(target->subnodes, 0);
+        free(rule->s);
+        const char *s = s7_symbol_name(update_val);
+        int len = strlen(s);
+        rule->s = calloc(len, sizeof(char));
+        strncpy(rule->s, s, len);
+        return target;
     }
 }

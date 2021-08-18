@@ -18,14 +18,15 @@ cc_binary(
 
 cc_library(
     name = "hello-lib",
-    srcs = ["hello-lib.cc", "howdy.cc", "howdy.h",],
+    srcs = ["hello-lib.cc", "howdy.cc", "howdy.h", "common.c"],
     hdrs = ["hello-lib.h"],
-    testonly = True
+    testonly = True,
+    allowv1syntax = 0
 )
 
 cc_library(
     name = "goodybe-lib",
-    srcs = ["goodbye-lib.cc", "aurevoir.cc", "aurevoir.h"],
+    srcs = ["goodbye-lib.cc", "aurevoir.cc", "aurevoir.h", "common.c"],
     hdrs = ["goodbye-lib.h"],
     testonly = True,
 )
