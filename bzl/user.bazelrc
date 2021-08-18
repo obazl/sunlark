@@ -4,13 +4,27 @@ build --subcommands=pretty_print
 build --verbose_failures
 # build --sandbox_debug
 
-# test --test_output=all
+test --test_output=all
 
-# build --//:debug=ast,s7-api,bindings,paths,queries,vectors,filters,targets,mutators,trace,set,properties,loads,serializers
+build --@sealark//:debug=s7-api,paths,queries,vectors,filters,targets,trace,set,properties,loads
+#,format,bindings
+#,mutators
+#,ast
+#,ctors
+#,serializers
+
+build --//:debug=s7-api,paths,queries,vectors,filters,targets,trace,set,properties,loads,bindings
+#,format
+#,ast
+#,ctors
+#,serializers
+#,mutators
 #,utarrays
 #,predicates
 #,mem
 
-# common --override_repository=sealark=/path/to/sealark
+## in .bazelrc: test --@sealark//src:yydebug=bindings,dicts,vectors
 
-# run -c dbg
+common --override_repository=sealark=/Users/gar/bazel/sealark
+
+run -c dbg
