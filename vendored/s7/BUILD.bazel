@@ -16,6 +16,13 @@ cc_library(
         "-Ivendored/linenoise",
         "-Ivendored/s7"
     ],
+    linkopts = select({
+        "//bzl/host:macos": [],
+        "//bzl/host:linux": ["-ldl", "-Wl,-export-dynamic"],
+        "//conditions:default": []
+    }) + [
+        "-lm"
+    ],
     deps = [
     ],
     visibility = ["//visibility:public"]
