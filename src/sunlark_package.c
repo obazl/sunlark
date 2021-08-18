@@ -199,6 +199,10 @@ s7_pointer sunlark_package_dispatcher(s7_scheme *s7,
 
     if (op == KW(>) || op == KW(target)) {
         /* log_debug("dispatching on pkg for target"); */
+        if (s7_list_length(s7, s7_cdr(path_args)) == 0) {
+            log_error("Missing arg for :>");
+            return handle_errno(s7, EMISSING_ARG_TARGET, path_args);
+        }
         result_list //= sunlark_targets_for_buildfile(s7, pkg);
             = _pkg_target_dispatcher(s7, pkg, s7_cdr(path_args));
             return result_list;
@@ -326,8 +330,8 @@ LOCAL s7_pointer _pkg_target_dispatcher(s7_scheme *s7,
         /* log_debug("TARGET"); */
         /* UT_array *targets = sealark_targets_for_pkg(pkg); */
         /* return nodelist_to_s7_list(s7, targets); */
-        /* return handle_errno(s7, EINVALID_ARG, path_args); */
-        return sunlark_new_node(s7, pkg);
+        return handle_errno(s7, EINVALID_ARG, path_args);
+        /* return sunlark_new_node(s7, pkg); */
     }
 
     if (s7_is_string(op)) {     /* :> "hello-world") */
