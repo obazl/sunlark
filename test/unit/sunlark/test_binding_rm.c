@@ -16,12 +16,12 @@ s7_scheme *s7;
 /**************/
 int main(void) {
     UNITY_BEGIN();
-    RUN_TEST(test_remove_binding_by_int);
+    /* RUN_TEST(test_remove_binding_by_int); */
     RUN_TEST(test_remove_binding_by_sym);
 
-    RUN_TEST(test_local_remove_binding_by_int);
+    /* RUN_TEST(test_local_remove_binding_by_int); */
 
-    RUN_TEST(test_rm_binding_val_item_by_int);
+    /* RUN_TEST(test_rm_binding_val_item_by_int); */
     return UNITY_END();
 }
 
@@ -150,8 +150,7 @@ void test_remove_binding_by_sym(void)
 
     bstr = "(pkg :> \"binding-rm-1\" :@ 'binding1)";
     binding = s7_eval_c_string(s7, bstr);
-    TEST_ASSERT( ! s7_is_c_object(binding));
-    TEST_ASSERT( binding == s7_make_symbol(s7,"binding_not_found") );
+    TEST_ASSERT( s7_is_null(s7,binding));
 
     /* look for error messages */
     /* errmsg = s7_get_output_string(s7, s7_current_error_port(s7)); */
