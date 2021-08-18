@@ -21,6 +21,7 @@ test_suite(
         ":string_props",
         ":string_set",
         ":strings",
+        ":target_get",
         ":targets",
         ":vector_strings",
         ":vector_get",
@@ -199,6 +200,15 @@ cc_test(
 )
 
 cc_test(
+    name = "target_get",
+    srcs = ["test_target_get.c", "test_target_get.h"],
+    data = [":BUILD.target_get"],
+    copts = COPTS,
+    deps = DEPS + [":validators"],
+    linkstatic = 1
+)
+
+cc_test(
     name = "targets",
     srcs = ["test_targets.c", "test_targets.h"],
     data = [":BUILD.targets"],
@@ -325,6 +335,7 @@ genrule(
         "test_strings.c",
         "test_string_props.c",
         "test_vector_strings.c",
+        "test_target_get.c",
         "test_targets.c",
         "test_vector_get.c",
         "test_vector_rm.c",
@@ -352,6 +363,7 @@ genrule(
         "test_vector_strings.h",
         "common.h",
         "validators.h",
+        "test_target_get.h",
         "test_targets.h",
         "test_vector_get.h",
         "test_vector_rm.h",
@@ -382,6 +394,7 @@ genrule(
         "    $(location test_string_props.c) \\",
         "    $(location test_dictionary_get.c) \\",
         "    $(location test_dictionary_set.c) \\",
+        "    $(location test_target_get.c) \\",
         "    $(location test_targets.c) \\",
         "    $(location test_vector_get.c) \\",
         "    $(location test_vector_rm.c) \\",

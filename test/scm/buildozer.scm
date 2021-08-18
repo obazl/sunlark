@@ -1,0 +1,97 @@
+;; $ bazel run edit -- -f test/buildozer/pkg/BUILD.bazel
+
+(define (test-buildozer-add-dep pkg)
+  (display "test-buildozer-add-dep")
+  (newline)
+
+  ;; # Edit //pkg:rule and //pkg:rule2, and add a dependency on //base
+  ;; buildozer 'add deps //base' //pkg:rule //pkg:rule2
+  ;; test data, test/buildozer/pkg/BUILD.bazel, targets: hello-world,
+  ;; goodbye-world
+
+  (let* (
+         (v (pkg :> "hello-world" :@ 'deps :value :-1))
+         )
+    ;; splice (append) a single value into the attr value list:
+    ;; (set! (pkg :> "hello-world" :@ 'deps :value :-1) (vector "//base"))
+    ;; (set! (pkg :> "goodbye-world" :@ 'deps :value :-1) (vector "//base"))
+
+    ;; or: splice (prepend)
+    (set! (pkg :> "hello-world" :@ 'deps :value :0) (list "//base"))
+    (set! (pkg :> "goodbye-world" :@ 'deps :value :0) (list "//base"))
+    (display (sunlark->string pkg :starlark :crush))
+    (newline)
+    ))
+
+(define (test-buildozer-replace-dep pkg)
+  (display "test-buildozer-replace-dep")
+  (newline)
+
+  ;; # Replace the dependency on pkg_v1 with a dependency on pkg_v2
+  ;; buildozer 'replace deps //pkg_v1 //pkg_v2' //pkg:rule
+
+  (set! (pkg :> "hello-world" :@ 'deps :value ":hello-lib") "//pkg_v2")
+  (display (sunlark->string pkg :starlark :crush))
+  (newline)
+  )
+
+(define (test-buildozer-add-load pkg)
+  (display "test-buildozer-add-load")
+  (newline)
+
+  ;; # A load for a skylark file in //pkg
+  ;; buildozer 'new_load //tools/build_rules:build_test.bzl build_test' //pkg:__pkg__
+
+  (let* (
+         (new_load (make-load "//tools/build_rules:build_test.bzl"
+                              :args '("build_test")
+                              :attrs '()))
+         )
+    ;; splice (append) a single load stmt:
+    (set! (pkg :load :-1) (vector new_load))
+
+    (display (sunlark->string pkg :starlark :crush))
+    (newline)
+    ))
+
+(define (test-buildozer-replace-load pkg)
+  (display "test-buildozer-replace-load")
+  (newline)
+
+  ;; no idea what buildozer means by this:
+  ;; # Replaces existing loads for build_test in //pkg
+  ;; buildozer 'replace_load @rules_build//build:defs.bzl build_test' //pkg:__pkg__
+
+  ;; maybe it means: find all load statements having "build_test" as an arg?
+  ;; but there could only be one of those
+
+  ;; (let* (
+  ;;        (ldstmt (pkg :load :? :arg "build_test"))
+  ;;        ;; or:
+  ;;        (loadstmt (sunlark-loadstmt-for-sym pkg 'build_test))
+  ;;        )
+  ;;   ;; splice (append) a single load stmt:
+  ;;   (set! (loadstmt :key) "@rules_build//build:defs.bzl build_test")
+
+  ;;   (display (sunlark->string pkg :starlark :crush))
+  ;;   (newline)
+  ;;   )
+  )
+
+(define (test-buildozer-rm-attr-from-all pkg)
+  (display "test-buildozer-rm-attr-from-all")
+  (newline)
+
+  ;; # Delete the testonly attribute in every rule in the package
+  ;; buildozer 'remove testonly' '//pkg:*'
+
+  ;; sunlark: iterate over targets in pkg
+  (for-each (lambda (t)
+              (set! (t :@ 'testonly) :null)
+              )
+            (pkg :>>))
+
+  (remove-trailing-commas pkg)
+  (display (sunlark->string pkg :starlark :crush))
+  (newline)
+  )

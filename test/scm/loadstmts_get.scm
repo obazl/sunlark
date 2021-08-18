@@ -14,7 +14,7 @@
 
          ;; (v (pkg :load :2 :@@)) ;; :0))
 
-         ;;(v (pkg :load :2 :@ :0))
+         (v (pkg :load :2 :@ :0))
          ;;(v (pkg :load :2 :@ :0 :key))
          ;; (v (pkg :load :2 :@ :0 :value))
          ;;(v (pkg :load :2 :@ :-1))
@@ -40,6 +40,6 @@
          )
     (display v) (newline)
     ;; (display (sunlark->string v :ast))
-    ;; (display (sunlark->string pkg :starlark :crush))
+    (display (sunlark->string pkg :starlark :crush))
     (newline)
     ))

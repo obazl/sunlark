@@ -15,6 +15,7 @@ s7_scheme *s7;
 char *form;
 s7_pointer pkg;
 s7_pointer path;
+s7_pointer targets;
 s7_pointer target;
 s7_pointer bindings, binding;
 s7_pointer key;

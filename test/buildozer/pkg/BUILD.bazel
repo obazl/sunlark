@@ -1,0 +1,31 @@
+package(default_visibility = ["//visibility:public"],)
+
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library",)
+
+cc_binary(
+    name = "hello-world",
+    srcs = ["hello-world.cc"],
+    deps = [":hello-lib"],
+    testonly = True,
+)
+
+cc_binary(
+    name = "goodbye-world",
+    srcs = ["goodbye-world.cc"],
+    deps = [":goodbye-lib"],
+    testonly = True
+)
+
+cc_library(
+    name = "hello-lib",
+    srcs = ["hello-lib.cc", "howdy.cc", "howdy.h",],
+    hdrs = ["hello-lib.h"],
+    testonly = True
+)
+
+cc_library(
+    name = "goodybe-lib",
+    srcs = ["goodbye-lib.cc", "aurevoir.cc", "aurevoir.h"],
+    hdrs = ["goodbye-lib.h"],
+    testonly = True,
+)
