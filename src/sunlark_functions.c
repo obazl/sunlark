@@ -314,6 +314,11 @@ void sunlark_register_ast_node_fns(s7_scheme *s7)
                             1, 1, true,
                             SUNLARK_TO_STRING_HELP);
 
+    s7_define_function(s7, "remove-trailing-commas",
+                       sunlark_remove_trailing_commas,
+                       1, 0, false,
+                       SUNLARK_REMOVE_TRAILING_COMMAS_HELP);
+
     // ast_node-let => s7_c_object_let, a let for the instance not the type
     /* s7_define_safe_function(s7, "ast-node-let", */
     /*                         sunlark_node_let, */
