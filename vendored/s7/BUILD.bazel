@@ -8,7 +8,7 @@ cc_library(
     hdrs  = ["s7.h"],
     copts = select({
         "//bzl/host:macos": ["-std=c11", "-Wextra"],
-        "//bzl/host:linux": ["-std=gnu11", "-W,extra"],
+        "//bzl/host:linux": ["-std=gnu11", "-Wextra"],
         "//conditions:default": ["-std=c11"],
     }) + [
         "-Wno-unused-parameter",
@@ -38,7 +38,7 @@ cc_binary(
         "//bzl/host:linux": ["-std=gnu11"],
         "//conditions:default": ["-std=c11"],
     }) + [
-        "-W,extra",
+        "-Wextra",
         # "-Ivendored/linenoise",
         "-O2", "-g"
     ],
