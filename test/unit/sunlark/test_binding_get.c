@@ -45,7 +45,7 @@ void test_forall_targets_forall_bindings(void) {
     /* check type, tid */
     TEST_ASSERT( !s7_is_c_object(targets) );
     TEST_ASSERT( s7_is_list(s7, targets) );
-    log_debug("len 1: %d", s7_list_length(s7, targets));
+    /* log_debug("len 1: %d", s7_list_length(s7, targets)); */
     TEST_ASSERT( s7_list_length(s7, targets) == 18 );
 
     /* same with concise op */
@@ -56,7 +56,7 @@ void test_forall_targets_forall_bindings(void) {
     /* check type, tid */
     TEST_ASSERT( !s7_is_c_object(targets2) );
     TEST_ASSERT( s7_is_list(s7, targets2) );
-    log_debug("len 2: %d", s7_list_length(s7, targets2));
+    /* log_debug("len 2: %d", s7_list_length(s7, targets2)); */
     TEST_ASSERT( s7_list_length(s7, targets2) == 18 );
 
     /* we can access a single target using a path expression, as in
