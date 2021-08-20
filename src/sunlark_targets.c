@@ -299,11 +299,42 @@ EXPORT s7_pointer sunlark_forall_targets(s7_scheme *s7,
     }
 
     if (s7_is_list(s7, op)) {
-        log_debug("filtering targets by list %s",
-                  s7_object_to_c_string(s7, op));
+        /* log_debug("filtering targets by list %s", */
+        /*           s7_object_to_c_string(s7, op)); */
         UT_array *tgts = sunlark_targets_from_filterlist(s7,
                                                          bf_node,
                                                          op);
+        int tgt_ct = utarray_len(tgts);
+        if (s7_list_length(s7, path_args) == 2) {
+            s7_pointer selector = s7_cadr(path_args);
+            int index = sunlark_kwindex_to_int(s7, selector);
+            /* log_debug("index: %d", index); */
+            if (errno == 0) {
+                if (index < 0) {
+                    if (abs(index) > tgt_ct) {
+                        log_error("abs(%d) > tgt_ct", index, tgt_ct);
+                        errno = EINDEX_OUT_OF_BOUNDS;
+                        return NULL;
+                    } else {
+                        index = tgt_ct + index;
+                        /* log_debug("recurring..."); */
+                        /* return sealark_vector_item_for_int(node, index); */
+                    }
+                }
+
+                if (index > tgt_ct-1) {
+                    log_error("index %d > target count %d", index, tgt_ct-1);
+                    errno = EINDEX_OUT_OF_BOUNDS;
+                    return handle_errno(s7, EINDEX_OUT_OF_BOUNDS, path_args);
+                }
+#if defined (DEBUG_TRACE) || defined(DEBUG_VECTORS)
+                log_debug("\tnormalized idx: %d", index);
+#endif
+
+            }
+            struct node_s *t = utarray_eltptr(tgts, index);
+            return sunlark_new_node(s7, t);
+        }
         return nodelist_to_s7_list(s7, tgts);
     }
     if (s7_is_string(op)) {
