@@ -56,7 +56,7 @@ s7_pointer sunlark_node_satisfies_kw_pred(s7_scheme *s7, s7_pointer kw, struct n
     }
 
     if ( (strncmp("printable?", pred, 10) == 0) && (strlen(pred) == 10) ) {
-        bool is_printable = sunlark_new_node(s7, self);
+        bool is_printable = sealark_is_printable(self);
         return s7_make_boolean(s7, is_printable);
     }
 
