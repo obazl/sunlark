@@ -89,7 +89,10 @@
 
 
          ;;;; symbols filter by target rule
-         (tlist (pkg :targets '(cc_binary))) ;; cc_library)))
+         ;; (tlist (pkg :targets 'cc_binary)) ;; cc_library)))
+         ;; (tlist (pkg :targets '(cc_test))) ;; cc_library)))
+         ;; (tlist (pkg :targets '(cc_binary))) ;; cc_library)))
+         ;; (tlist (pkg :targets '(cc_binary cc_library)))
          ;; (tlist (pkg :targets '(cc_library file*)))
          ;; (tlist (pkg :targets 'cc_*))
 
@@ -105,6 +108,15 @@
          ;; currently out-of-bounds indices in a list are not caught
          ;; (tlist (pkg :targets '(-1 5)))
 
+         ;; filter then select
+         ;; (tlist (pkg :targets '(cc_binary cc_test))) ;; 0))
+         ;;(tlist (pkg :targets '(cc_test)))
+         (tlist (pkg :targets '(cc_binary) :-1))
+         ;; (tlist (pkg :targets 'cc_test :count)) ;; not supported
+         ;; (tlist (pkg :targets '(cc_test f*)))
+         ;; (tlist (pkg :targets '(cc_test foo*) :count))
+         ;; (tlist (pkg :targets '(0 4) 0)) ;; nope
+
          ;;;; mixed
          ;; (tlist (pkg :targets '(file* "hello-world")))
          ;; (tlist (pkg :targets '("hello-world" cc_library)))
@@ -118,8 +130,9 @@
          )
     ;; (display (length tlist))
     ;; (newline)
-    ;; (display  v) (newline)
-    (display (sunlark->string pkg :starlark :crush))
+    (display ((pkg :> 0 :@ :0 :key) :printable?)) (newline)
+    ;; (display (sunlark->string pkg :ast))
+    ;; (display (sunlark->string pkg :starlark :crush))
     (newline)
   ))
 

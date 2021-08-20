@@ -86,11 +86,12 @@ int sunlark_kwindex_to_int(s7_scheme *s7, s7_pointer arg)
     log_debug("sunlark_kwindex_to_int: %s", s7_object_to_c_string(s7, arg));
 #endif
 
+    errno = 0;
+
     int idx;
     if (s7_is_integer(arg))
         return s7_integer(arg);
 
-    errno = 0;
     /* sunlark_is_nbr_kw will set errno */
     return sunlark_is_nbr_kw(s7, arg);
 }

@@ -221,3 +221,12 @@
   (display (sunlark->string pkg :starlark :crush))
   (newline)
   )
+
+;; not yet implemented: comments
+
+;; # Add a comment to the timeout attribute of //pkg:rule_test
+;; buildozer 'comment timeout Delete\ this\ after\ 2015-12-31.' //pkg:rule_test
+
+;; (set! (pkg :> "rule_test" :@ 'timeout :comment)
+;;       (make-comment "Delete this after 2015-12-31."))
+

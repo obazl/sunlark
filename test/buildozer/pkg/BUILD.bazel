@@ -30,3 +30,22 @@ cc_library(
     hdrs = ["goodbye-lib.h"],
     testonly = True,
 )
+
+cc_test(
+    name = "goodybe-test",
+    srcs = ["goodbye-lib.cc", "aurevoir.cc", "aurevoir.h", "common.c"],
+    hdrs = ["goodbye-lib.h"],
+    testonly = True,
+)
+
+cc_test(
+    name = "goodybe-test",
+    srcs = ["goodbye-lib.cc", "aurevoir.cc", "aurevoir.h", "common.c"],
+    hdrs = ["goodbye-lib.h"],
+    testonly = True,
+)
+
+#
+# asdf
+# adgshdf
+# pljplj

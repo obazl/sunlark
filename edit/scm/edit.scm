@@ -14,13 +14,14 @@
 (define (sunlark-ast-handler pkg)
   (display (string-append "running default sunlark-ast-handler proc"))
   (newline)
-  (display (string-append "to run your own proc, put it in .sunlark.d/edit.scm"))
+  (display (string-append "to run your own proc, copy this to .sunlark.d/edit.scm and edit to taste"))
   (newline)
   (display (format #f "load path: ~S" *load-path*))
   (newline)
 
-  ;; (set! *load-path* (cons "test/scm" *load-path*))
-  ;; (load "myscript.scm")
+  ;; to add your own source dir to the load path:
+  ;; (set! *load-path* (cons "path/to/scm" *load-path*))
+  ;; (load "myscript.scm") ;; loads first matching file in load path
 
   (test-1 pkg)
   )
