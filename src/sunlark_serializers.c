@@ -720,7 +720,7 @@ LOCAL void _display_funcall_attr(struct node_s *nd,
         _display_binding_value(sub, buffer, level+1);
         i++;
     }
-    utstring_printf(buffer, "))");
+    utstring_printf(buffer, ")");
 }
 
 /* **************** */
@@ -1017,12 +1017,23 @@ LOCAL void _display_vector(struct node_s *nd,
 #endif
 
     assert(nd->tid == TK_List_Expr);
+    /* sealark_debug_log_ast_outline(nd, 0); */
+
+    struct node_s *lbrack = utarray_eltptr(nd->subnodes, 0);
+    assert(lbrack->tid == TK_LBRACK);
+    utstring_printf(buffer, "[");
 
     struct node_s *expr_list = utarray_eltptr(nd->subnodes, 1);
+    if (expr_list->tid == TK_RBRACK) {
+        /* empty vector */
+        utstring_printf(buffer, "]");
+        return;
+    }
+
     int len = utarray_len(expr_list->subnodes);
     bool split = (len/2 > 4)? true : false;
 
-    utstring_printf(buffer, "[%s", split? "\n" : "");
+    utstring_printf(buffer, "%s", split? "\n" : "");
 
     struct node_s *sub = NULL;
     int i = 0;
@@ -1032,16 +1043,21 @@ LOCAL void _display_vector(struct node_s *nd,
                             split? "\n" : " ",
                             split? (level+3)*2 : 0,
                             split? " " : "");
-        } else {
-            if (i==0)
-                utstring_printf(buffer, "%*s",
-                                split? (level+3)*2 : 0,
-                                split? " " : "");
-            _display_vector_item(sub, buffer, level);
+            goto loop;
         }
+        if (i==0)
+            utstring_printf(buffer, "%*s",
+                            split? (level+3)*2 : 0,
+                            split? " " : "");
+        _display_vector_item(sub, buffer, level);
+    loop:
         i++;
     }
+
+    /* struct node_s *lbrack = utarray_eltptr(nd->subnodes, 2); */
+    /* assert(lbrack->tid == TK_RBRACK); */
     utstring_printf(buffer, "]");
+
 }
 
 /* **************************************************************** */
@@ -1071,6 +1087,22 @@ void sunlark_display_node(// s7_scheme *s7,
         break;
     case TK_Binding:
         _display_binding_node(nd, buffer, level);
+        break;
+    case TK_Bin_Expr: //FIXME: display in scheme order, op-first?
+        {
+        struct node_s *x = utarray_eltptr(nd->subnodes, 0);
+        sunlark_display_node(x, buffer, level); // lhs
+        x = utarray_eltptr(nd->subnodes, 1);
+        sunlark_display_node(x, buffer, level); // binop
+         x = utarray_eltptr(nd->subnodes, 2);
+        sunlark_display_node(x, buffer, level); // rhs
+        }
+        break;
+    case TK_Expr:
+        {
+        struct node_s *x = utarray_eltptr(nd->subnodes, 0);
+        sunlark_display_node(x, buffer, level);
+        }
         break;
     case TK_Call_Expr:
         _display_call_expr(nd, buffer, level);
@@ -1126,6 +1158,10 @@ void sunlark_display_node(// s7_scheme *s7,
         /* utstring_printf(buffer, " s=\"%s\"", nd->s); */
     }
         break;
+    case TK_PLUS:
+        //FIXME: line/col
+        utstring_printf(buffer, " + ");
+        break;
     case TK_COMMA:
     case TK_COLON:
     case TK_LBRACE:
@@ -1136,8 +1172,9 @@ void sunlark_display_node(// s7_scheme *s7,
     case TK_RPAREN:
         break;
     default:
-        utstring_printf(buffer, "\nUNCAUGHT:%s\n", sealark_tid_to_string(nd->tid));
-
+        utstring_printf(buffer, "\ndisplay_node UNCAUGHT: %d %s\n",
+                        nd->tid, TIDNAME(nd));
+                        /* sealark_tid_to_string(nd->tid)); */
         if (nd->comments) {
             _display_comments(nd, buffer, level);
         }
