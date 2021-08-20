@@ -87,6 +87,7 @@
          ;;;;  multiple filters not supported by DSL, but programmable
          ;;;; (tlist (pkg :targets '(cc_binary 3 file*) '(cc_*))); No
 
+         (tlist (pkg :>>)) ;; cc_library)))
 
          ;;;; symbols filter by target rule
          ;; (tlist (pkg :targets 'cc_binary)) ;; cc_library)))
@@ -111,7 +112,7 @@
          ;; filter then select
          ;; (tlist (pkg :targets '(cc_binary cc_test))) ;; 0))
          ;;(tlist (pkg :targets '(cc_test)))
-         (tlist (pkg :targets '(cc_binary) :-1))
+         ;; (tlist (pkg :targets '(cc_binary) :-1))
          ;; (tlist (pkg :targets 'cc_test :count)) ;; not supported
          ;; (tlist (pkg :targets '(cc_test f*)))
          ;; (tlist (pkg :targets '(cc_test foo*) :count))
@@ -127,12 +128,23 @@
          ;; (tlist (pkg :targets '(1 file*)))
          ;; (tlist (pkg :targets '(cc_binary 3)))
          ;; (tlist (pkg :targets '(cc_binary 1))) ;; both refer to same target
+         (i 0)
          )
+    (for-each (lambda (t)
+                (display i) (newline)
+                (set! i (+ i 1))
+                ;; (display (sunlark-node? t)) (newline)
+                ;; (display (t :tid->kw)) (newline)
+                (display t) (newline)
+                )
+              tlist)
     ;; (display (length tlist))
     ;; (newline)
-    (display ((pkg :> 0 :@ :0 :key) :printable?)) (newline)
+    ;; (display ((pkg :> 0 :@ :0 :key) :printable?)) (newline)
+    ;; (display tlist) (newline)
     ;; (display (sunlark->string pkg :ast))
     ;; (display (sunlark->string pkg :starlark :crush))
+    ;; (display (sunlark->string (pkg :> 12) :starlark :crush))
     (newline)
   ))
 

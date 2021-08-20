@@ -112,6 +112,15 @@ Sunlark (AST) nodes or lists of Sunlark nodes. In the last two preceding example
 
 See [doc/operators.md](doc/operators.md) for a complete list of operators.
 
+#### abbreviations
+
+As a convenience:
+
+* `:>>` == `:targets`
+* `:>` == `:target`
+* `:@@` == `:bindings` == `:attrs`
+* `:@` == `:binding` == `:attr`
+
 ### node types and properties
 
 A Sunlark node is a Scheme wrapper around a C `struct node_s*`. Each
@@ -140,7 +149,14 @@ properties:
 
 ### filtering
 
+Target lists may be formed by filtering on the :rule property of
+target nodes.  A filter is a (Scheme) symbol or list of symbols; if the symbol ends with `*` it will be treated as a glob expression. Examples:
 
+* `(pkg :targets 'cc_binary)` - list only targets with `:rule` == `cc_binary`
+* `(pkg :targets '(cc_binary cc_library))` - list targets whose :rule is either `cc_binary` or `cc_library`
+* `(pkg :targets 'cc_*)` - list all targets whose `:rule` starts with `cc_`
+
+The result of such filtering expression is a Scheme list.
 
 ### mutation
 
