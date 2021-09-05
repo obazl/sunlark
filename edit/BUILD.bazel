@@ -6,6 +6,8 @@ cc_binary(
     srcs  = [
         "edit.c",
         "edit.h",
+        "bazel_config.c",
+        "bazel_config.h",
     ],
     data = [
         "//edit/scm:edit.scm"
@@ -37,7 +39,6 @@ cc_binary(
         "//vendored/logc",
         "//vendored/s7",
         "//vendored/uthash",
-        "@sealark//bazel",
     ],
 )
 
@@ -46,16 +47,17 @@ genrule(
     name = "mkhdrs",
     srcs = [
         "edit.c",
-        "@sealark//bazel:bazel_config.c",
+        "bazel_config.c",
     ],
     outs = [
         "edit.h",
+        "bazel_config.h",
     ],
     cmd = "\n".join([
         "SRC1=$(location edit.c)",
         "SRCDIR1=`dirname $$SRC1`",
         "$(location //vendored/makeheaders) \\",
-        "    $(location @sealark//bazel:bazel_config.c) \\",
+        "    $(location bazel_config.c) \\",
         "    $(location edit.c)",
         "cp $${SRCDIR1}/*.h $(@D)",
     ]),
