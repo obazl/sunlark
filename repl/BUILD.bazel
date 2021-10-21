@@ -23,7 +23,7 @@ cc_binary(
         "-Iexternal/sunlark/vendored/s7",
         "-Ivendored/uthash",
         "-Iexternal/sunlark/vendored/uthash",
-        "-I$(GENDIR)/external/sealark/bazel"
+        # "-I$(GENDIR)/external/sealark/bazel"
     ],
     # data = [
     #     "//repl/scm:edit.scm"
@@ -40,7 +40,7 @@ cc_binary(
         "//vendored/linenoise",
         "//vendored/s7",
         "//vendored/uthash",
-        "@sealark//bazel"
+        # "@sealark//bazel"
     ],
     visibility = ["//visibility:public"]
 )
@@ -50,7 +50,7 @@ genrule(
     name = "mkhdrs",
     srcs = [
         "repl.c",
-        "@sealark//bazel:bazel_config.c",
+        # "@sealark//bazel:bazel_config.c",
     ],
     outs = [
         "repl.h",
@@ -59,7 +59,7 @@ genrule(
         "SRC1=$(location repl.c)",
         "SRCDIR1=`dirname $$SRC1`",
         "$(location //vendored/makeheaders) \\",
-        "    $(location @sealark//bazel:bazel_config.c) \\",
+        # "    $(location @sealark//bazel:bazel_config.c) \\",
         "    $(location repl.c)",
         "cp $${SRCDIR1}/*.h $(@D)",
     ]),
